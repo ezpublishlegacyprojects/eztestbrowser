@@ -18,9 +18,10 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $object = new idObject();
     $object->fromeZContentObject(eZContentObject::fetchByRemoteID('test'));
 
-    $this->assertEquals($object->class_identifier, 'article');
-    $this->assertEquals($object->title, 'Test 2');
-    $this->assertEquals($object->object->mainParentNodeId(), 2);
+    $this->assertEquals('article', $object->class_identifier);
+    $this->assertEquals('Test 2', $object->title);
+    $this->assertEquals(2, $object->section_id);
+    $this->assertEquals(2, $object->object->mainParentNodeId());
 
     $translations_list =  $object->object->currentVersion()->translationList();
 

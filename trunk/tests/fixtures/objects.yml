@@ -1,5 +1,6 @@
 Article:
   test:
+    section_id: 2
     locations:
       main: { parent_node_id: 2}
     attributes:

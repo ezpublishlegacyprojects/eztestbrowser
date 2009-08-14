@@ -8,6 +8,15 @@ class eZBrowserTestCase extends BrowserTestCase
 
   protected static $load_once = false;
   
+  protected $kernel_schema = 'kernel/sql/mysql/kernel_schema.sql';
+  
+  protected $cleandata = 'kernel/sql/mysql/cleandata.sql';
+  
+  protected function initialize()
+  {
+    $this->sqlFiles = array(realpath($this->kernel_schema), realpath($this->cleandata));
+  }
+  
   /**
    * Sets up the database enviroment
    */
@@ -18,7 +27,8 @@ class eZBrowserTestCase extends BrowserTestCase
       self::$load_once = true;
       
       $ini = eZINI::instance('site.ini');
-      $this->sqlFiles = array(realpath('kernel/sql/mysql/kernel_schema.sql'), realpath('kernel/sql/mysql/cleandata.sql'));
+      
+      $this->initialize();
 
       if (!$ini->hasVariable('DatabaseSettings', 'dsn'))
       {
@@ -27,7 +37,12 @@ class eZBrowserTestCase extends BrowserTestCase
 
       $dsn = new ezpDsn($ini->variable('DatabaseSettings', 'dsn'));
       $this->sharedFixture = ezpTestDatabaseHelper::create($dsn);
-      ezpTestDatabaseHelper::insertSqlData( $this->sharedFixture, $this->sqlFiles );
+      
+      if (!ezpTestDatabaseHelper::insertSqlData( $this->sharedFixture, $this->sqlFiles ))
+      {
+        throw new Exception('Impossible to load some sql files');
+      };
+      
       eZDB::setInstance( $this->sharedFixture );
 
       $ini_test = eZINI::instance('test.ini');

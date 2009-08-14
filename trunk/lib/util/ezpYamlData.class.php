@@ -65,27 +65,34 @@ class ezpYamlData
   
   public function loadObjectsData($file)
   {
-    $data = $this->parseYaml($file);
-    
-    foreach ($data as $object_class => $objects)
+    try 
     {
-      foreach ($objects as $remote_id => $object_parameters)
+      $data = $this->parseYaml($file);
+      
+      foreach ($data as $object_class => $objects)
       {
-        $object_parameters['remote_id'] = $remote_id;
-        $object = $this->createOrRetrieve($object_parameters, $object_class);
-        $object->hydrate($object_parameters);
-        $object->object->store();
-        
-        $this->loadLocations($object_parameters, $object);
-        $this->loadAttributes($object_parameters, $object);
-        $this->loadTranslations($object_parameters, $object);
-        
-        $object->publish();
-        
-        $this->setContentObjectMap($object);
+        foreach ($objects as $remote_id => $object_parameters)
+        {
+          $object_parameters['remote_id'] = $remote_id;
+          $object = $this->createOrRetrieve($object_parameters, $object_class);
+          $object->hydrate($object_parameters);
+          $object->object->store();
+          
+          $this->loadLocations($object_parameters, $object);
+          $this->loadAttributes($object_parameters, $object);
+          $this->loadTranslations($object_parameters, $object);
+          
+          $object->publish();
+          
+          $this->setContentObjectMap($object);
+        }
       }
     }
-  }
+    catch (Exception $e)
+    {
+      echo $e->getTraceAsString();
+    }
+}
 
   /**
    * Load multiple location for object
@@ -127,39 +134,46 @@ class ezpYamlData
   
   public function loadClassesData($file)
   {
-    $data = $this->parseYaml($file);
-
-    foreach ($data as $name => $class_data)
+    try 
     {
-      $class = new ezpClass($name, $this->getIdentifierFromName($name), $class_data['object_name']);
-      $class->class->setAttribute('is_container', (bool)$class_data['is_container']);
-      
-      foreach ($class_data['attributes'] as $identifier => $attribute_data)
+      $data = $this->parseYaml($file);
+  
+      foreach ($data as $name => $class_data)
       {
-        $attribute = $class->add($attribute_data['name'], $identifier, $attribute_data['type']);
-        $this->setClassAttribute($attribute, 'can_translate', $attribute_data['can_translate']);
-        $this->setClassAttribute($attribute, 'is_required', $attribute_data['is_required']);
-        $attribute->store();
-      }
-
-      $attributes = $class->class->dataMap();
-      
-      foreach ($class_data['translations'] as $language_code => $language_data)
-      {
-        eZContentLanguage::fetchByLocale($language_code, true);
-        $class->class->setName($language_data['name'], $language_code);
+        $class = new ezpClass($name, $this->getIdentifierFromName($name), $class_data['object_name']);
+        $class->class->setAttribute('is_container', (bool)$class_data['is_container']);
         
-        foreach ($language_data['attributes'] as $identifier => $name)
+        foreach ($class_data['attributes'] as $identifier => $attribute_data)
         {
-          $attributes[$identifier]->setName($name, $language_code);
-          $attributes[$identifier]->store();
+          $attribute = $class->add($attribute_data['name'], $identifier, $attribute_data['type']);
+          $this->setClassAttribute($attribute, 'can_translate', $attribute_data['can_translate']);
+          $this->setClassAttribute($attribute, 'is_required', $attribute_data['is_required']);
+          $attribute->store();
         }
+  
+        $attributes = $class->class->dataMap();
+        
+        foreach ($class_data['translations'] as $language_code => $language_data)
+        {
+          eZContentLanguage::fetchByLocale($language_code, true);
+          $class->class->setName($language_data['name'], $language_code);
+          
+          foreach ($language_data['attributes'] as $identifier => $name)
+          {
+            $attributes[$identifier]->setName($name, $language_code);
+            $attributes[$identifier]->store();
+          }
+        }
+        
+        $class->store();
+        
+        $this->classGroup = eZContentClassClassGroup::create( $class->id, $class->version, 1, 'Content');
+        $this->classGroup->store();
       }
-      
-      $class->store();
-      
-      $this->classGroup = eZContentClassClassGroup::create( $class->id, $class->version, 1, 'Content');
-      $this->classGroup->store();
+    }
+    catch (Exception $e)
+    {
+      echo $e->getTraceAsString();
     }
   }
 

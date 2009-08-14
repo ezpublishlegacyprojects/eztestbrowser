@@ -39,12 +39,14 @@ class idObject extends ezpObject
   
   public function hydrate($object_parameters)
   {
-    $this->object->setAttribute('remote_id', $object_parameters['remote_id']);
-
-    if (isset($object_parameters['published']))
+    foreach ($object_parameters as $name => $value)
     {
-      $this->object->setAttribute('published', $object_parameters['published']);
+      if($this->object->hasAttribute($name))
+      {
+        $this->object->setAttribute($name, $value);
+      }
     }
+    
   }
   
   public function fromeZContentObject($object)
