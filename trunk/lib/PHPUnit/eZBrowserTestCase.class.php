@@ -26,16 +26,9 @@ class eZBrowserTestCase extends BrowserTestCase
     {
       self::$load_once = true;
       
-      $ini = eZINI::instance('site.ini');
-      
       $this->initialize();
 
-      if (!$ini->hasVariable('DatabaseSettings', 'dsn'))
-      {
-        throw new Exception('Database dsn is not set in DatabaseSettings on site.ini file');
-      }
-
-      $dsn = new ezpDsn($ini->variable('DatabaseSettings', 'dsn'));
+      $dsn = ezpTestRunner::dsn();
       $this->sharedFixture = ezpTestDatabaseHelper::create($dsn);
       
       if (!ezpTestDatabaseHelper::insertSqlData( $this->sharedFixture, $this->sqlFiles ))
