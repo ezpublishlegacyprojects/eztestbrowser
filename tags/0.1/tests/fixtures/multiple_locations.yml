@@ -1,0 +1,45 @@
+Folder:
+  folder_menu_top:
+    locations:
+      main: { parent_node_id: 2}
+    attributes:
+      name: Menu Top
+      short_description: Objects contained in this folder will be showed in the top menu
+  folder_menu_left:
+    locations:
+      main: { parent_node_id: 2}
+    attributes:
+      name: Menu Left
+      short_description: Objects contained in this folder will be showed in the left menu
+
+Article:
+  la_famiglia:
+    locations:
+      main:      { parent_node_id: 2, priority: 10}
+      top_menu:  { parent_node_id: folder_menu_top, priority: 0}
+      left_menu: { parent_node_id: folder_menu_left, priority: -5}
+    attributes:
+      title: The family
+      intro: incontrate la famiglia Zonin e la sua passione per la viticultura sin dal 1891
+    translations:
+      ita-IT:
+         title: La famiglia
+         
+  le_sedi:
+    locations:
+      main:      { parent_node_id: 2, priority: 10}
+      top_menu:  { parent_node_id: folder_menu_top, priority: 0}
+      left_menu: { parent_node_id: folder_menu_left, priority: -5}
+    attributes:
+      title: Location
+      intro: bla bla bla
+      
+  le_tenute:
+    locations:
+      main:      { parent_node_id: 2, priority: 10}
+      top_menu:  { parent_node_id: folder_menu_top, priority: 0}
+    attributes:
+      title: The family 2
+      intro: incontrate la famiglia Zonin e la sua passione per la viticultura sin dal 1891
+
+
