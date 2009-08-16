@@ -1,7 +1,0 @@
-<?php /*
-
-[TestSettings]
-Classes=
-Objects=
-
-*/ ?>

@@ -1,0 +1,84 @@
+INSTALLATION
+---------------------------------------------------------------------------
+
+1. Download eZ Publish >= 4.1 (with ezc)
+
+2. Install the plain site version
+
+3. Download and install phpunit following the official tutorial:
+
+http://www.phpunit.de/manual/current/en/installation.html
+
+4. Download the eZ Publish test suite in the eZ Publish root with the following command:
+
+svn export http://pubsvn.ez.no/nextgen/stable/4.1/tests/ tests
+
+5. Download extension with the following command:
+
+cd extension/
+svn export http://svn.projects.ez.no/eztestbrowser/trunk/ eztestbrowser
+
+6. Enabled the extension in settings/override/site.ini.append.php adding the following code:
+
+[ExtensionSettings]
+...
+ActiveExtensions[]=eztestbrowser
+...
+
+7. Generate autoload php file with the following command:
+
+php bin/php/ezpgenerateautoloads.php -k
+php bin/php/ezpgenerateautoloads.php -e
+php bin/php/ezpgenerateautoloads.php -o
+php bin/php/ezpgenerateautoloads.php -s
+
+8. Enabled kernel override option changing the config.php file with the following command:
+
+cp config.php-RECOMMENDED config.php
+
+9. Change line 76 of config.php file with the following code:
+
+define( 'EZP_AUTOLOAD_ALLOW_KERNEL_OVERRIDE', true );
+
+8. Create your extension:
+
+mkdir extension/mysite extension/mysite/tests extension/mysite/tests/functional extension/mysite/tests/fixtures
+
+9. Enabled your extension in settings/override/site.ini.append.php adding the following code:
+
+[ExtensionSettings]
+...
+ActiveExtensions[]=mysite
+...
+
+10. Create your classes.yml fixtures and object.yml fixtures with the following code:
+
+touch extension/mysite/tests/fixtures/classes.yml extension/mysite/tests/fixtures/objects.yml
+
+11. Create our suite.php file:
+
+touch extension/mysite/tests/suite.php
+
+and add following code:
+
+class mysiteTestSuite extends ezpDatabaseTestSuite
+{
+  public function __construct()
+  {
+    parent::__construct();
+    $this->setName('MySite Test Suite');
+  }
+  
+  public static function suite()
+  {
+    return new self();
+  }
+}
+
+12. Generate autoload files estension again with the following command:
+
+php bin/php/ezpgenerateautoloads.php -e
+
+13. Test if everything works fine run all tests with the following command:
+
+php tests/runtests.php --db-per-test --dsn=mysql://<your_db_user>:<your_db_password>@<your_db_host>/<your_db_name>
