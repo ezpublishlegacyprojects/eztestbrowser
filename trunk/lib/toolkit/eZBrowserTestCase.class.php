@@ -20,7 +20,7 @@
 * 
 */
 
-abstract class eZBrowserTestCase extends BrowserTestCase
+abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 {
   protected $sqlFiles = array();
 
