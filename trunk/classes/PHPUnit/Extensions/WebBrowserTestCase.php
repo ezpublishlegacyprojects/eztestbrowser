@@ -65,11 +65,12 @@ require_once dirname(__FILE__).'/WebBrowserTestCase/Vendor/sfWebBrowser/lib/sfWe
 class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
 {
   protected $browser;
+  protected $browser_adapter = null;
   
   public function __construct()
   {
     parent::__construct();
-    $this->browser = new sfWebBrowser(array(), null, array('cookies' => true, 'cookies_file' => 'cookies-zonin.txt', 'cookies_dir' => '/tmp'));
+    $this->browser = new sfWebBrowser(array(), $this->browser_adapter, array('cookies' => true, 'cookies_file' => 'cookies-zonin.txt', 'cookies_dir' => '/tmp'));
   }
   
   public function __call($method, $parameters)

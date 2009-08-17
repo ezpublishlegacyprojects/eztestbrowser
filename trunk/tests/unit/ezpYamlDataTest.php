@@ -10,7 +10,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
   
   public function testLoadObjectsData()
   {
-    $fixture = dirname(__FILE__) . '/../fixtures/objects.yml';
+    $fixture = dirname(__FILE__) . '/fixtures/objects.yml';
     
     $data = new ezpYamlData();
     $data->loadObjectsData($fixture);
@@ -32,7 +32,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadClassesData()
   {
-    $fixture = dirname(__FILE__) . '/../fixtures/classes.yml';
+    $fixture = dirname(__FILE__) . '/fixtures/classes.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($fixture);
@@ -69,8 +69,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadNodeTreeData()
   {
-    $classes = dirname(__FILE__) . '/../fixtures/classes.yml';
-    $objects = dirname(__FILE__) . '/../fixtures/tree.yml';
+    $classes = dirname(__FILE__) . '/fixtures/classes.yml';
+    $objects = dirname(__FILE__) . '/fixtures/tree.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($classes);
@@ -99,7 +99,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadRelatedObjectData()
   {
-    $objects = dirname(__FILE__) . '/../fixtures/related_object.yml';
+    $objects = dirname(__FILE__) . '/fixtures/related_object.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -113,7 +113,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
   
   public function testLoadContentRootData()
   {
-    $objects = dirname(__FILE__) . '/../fixtures/content_root.yml';
+    $objects = dirname(__FILE__) . '/fixtures/content_root.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -131,7 +131,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadMultipleLocationDataExceptions()
   {
-    $objects = dirname(__FILE__) . '/../fixtures/multiple_locations_exceptions2.yml';
+    $objects = dirname(__FILE__) . '/fixtures/multiple_locations_exceptions2.yml';
 
     try
     {
@@ -145,7 +145,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
   
   public function testLoadMultipleLocationData()
   {
-    $objects = dirname(__FILE__) . '/../fixtures/multiple_locations.yml';
+    $objects = dirname(__FILE__) . '/fixtures/multiple_locations.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -178,7 +178,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
   
   public function testLoadPriorityData()
   {
-    $objects = dirname(__FILE__) . '/../fixtures/priority.yml';
+    $objects = dirname(__FILE__) . '/fixtures/priority.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
