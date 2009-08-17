@@ -1,0 +1,6 @@
+Folder:
+  folder_menu_top:
+    locations: 2
+    attributes:
+      name: Menu Top
+      short_description: Objects contained in this folder will be showed in the top menu
