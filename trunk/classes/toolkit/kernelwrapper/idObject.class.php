@@ -97,6 +97,7 @@ class idObject extends ezpObject
           {
             case 'ezdate':
             case 'ezobjectrelation':
+            case 'ezobjectrelationlist':
               $attribute->fromString($value);
               break;
             default:

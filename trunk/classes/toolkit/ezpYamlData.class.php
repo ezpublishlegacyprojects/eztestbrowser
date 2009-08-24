@@ -76,11 +76,56 @@ class ezpYamlData
     }
   }
   
+  /**
+   * Load multiple location for object
+   *
+   * @param ezpObject $object
+   * @param array $object_parameters
+   */
+  private function loadLocations($parameters, $object)
+  {
+    if (!isset($parameters['locations']))
+    {
+      return;
+    }
+    
+    if (!is_array($parameters['locations']))
+    {
+      throw new Exception('You must set locations data in yaml');
+    }
+
+    foreach ($parameters['locations'] as $index => $location)
+    {
+      $node = $object->addNode($this->getParentNodeId($location['parent_node_id']), $index == 'main');
+      
+      if (isset($location['priority']))
+      {
+        $node->setAttribute('priority', $location['priority']);
+        $node->store();
+      }
+    }
+  }
+  
   private function setContentObjectMap($object)
   {
     $remote_id = $object->object->attribute('remote_id');
     $this->object_ids[$remote_id] = $object->object->mainNodeID();
     $this->content_object_ids[$remote_id] = $object->id;
+  }
+  
+
+
+  private function setClassAttribute($attribute, $attribute_name, $value)
+  {
+    if(isset($value))
+    {
+      $attribute->setAttribute($attribute_name, $value);
+    }
+  }
+  
+  private function getIdentifierFromName($name)
+  {
+    return strtolower($name);
   }
   
   public function loadObjectsData($file)
@@ -112,45 +157,9 @@ class ezpYamlData
     {
       echo $e->getTraceAsString();
     }
-}
-
-  /**
-   * Load multiple location for object
-   *
-   * @param ezpObject $object
-   * @param array $object_parameters
-   */
-  private function loadLocations($parameters, $object)
-  {
-    if (!isset($parameters['locations']))
-    {
-      return;
-    }
-    
-    if (!is_array($parameters['locations']))
-    {
-      throw new Exception('You must set locations data in yaml');
-    }
-
-    foreach ($parameters['locations'] as $index => $location)
-    {
-      $node = $object->addNode($this->getParentNodeId($location['parent_node_id']), $index == 'main');
-      
-      if (isset($location['priority']))
-      {
-        $node->setAttribute('priority', $location['priority']);
-        $node->store();
-      }
-    }
   }
 
-  private function setClassAttribute($attribute, $attribute_name, $value)
-  {
-    if(isset($value))
-    {
-      $attribute->setAttribute($attribute_name, $value);
-    }
-  }
+  
   
   public function loadClassesData($file)
   {
@@ -197,10 +206,7 @@ class ezpYamlData
     }
   }
 
-  private function getIdentifierFromName($name)
-  {
-    return strtolower($name);
-  }
+  
 }
 
 function remoteIdToId(&$value, $name, $parameters)

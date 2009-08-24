@@ -28,6 +28,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 
   protected static $load_once = false;
   
+  protected static $fixtures_hash;
+  
   protected $kernel_schema = 'kernel/sql/mysql/kernel_schema.sql';
   
   protected $cleandata = 'kernel/sql/mysql/cleandata.sql';
@@ -41,13 +43,19 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     $this->sqlFiles = array(realpath($this->kernel_schema), realpath($this->cleandata));
   }
   
+  private function getFixturesHash()
+  {
+    return hash('md5', $this->fixtures_classes.$this->fixtures_objects);
+  }
+  
   /**
    * Sets up the database enviroment
    */
   protected function setUp()
   {
-    if(!self::$load_once/* || ezpTestRunner::dbPerTest()*/)
+    if(!self::$load_once || self::$fixtures_hash != $this->getFixturesHash())
     {
+      self::$fixtures_hash = $this->getFixturesHash();
       self::$load_once = true;
       
       $this->initialize();

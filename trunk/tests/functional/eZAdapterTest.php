@@ -11,6 +11,11 @@ class FunctionalTest extends eZBrowserTestCase
   {
     $ini = eZINI::instance();
     
+    if (!strstr($ini->variable('SiteSettings', 'SiteURL'), 'localhost'))
+    {
+      $this->markTestSkipped('This test run only in localhost way');
+    }
+    
     $this->get('http://' . $ini->variable('SiteSettings', 'SiteURL'));
     $this->checkElementResponse('h1', 'eZ Test Browser');
     $this->click('News');
