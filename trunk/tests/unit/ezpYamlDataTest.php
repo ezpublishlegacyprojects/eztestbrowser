@@ -190,6 +190,18 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals(10, $assigned_nodes[1]->attribute('priority'));  
     $this->assertEquals(-1, $assigned_nodes[0]->attribute('priority'));  
   }
+  
+  public function testLoadRelatedObjects()
+  {
+    $objects = dirname(__FILE__) . '/fixtures/related.yml';
 
-
+    $data = new ezpYamlData();
+    $data->loadObjectsData($objects);
+    
+    $object = eZContentObject::fetchByRemoteID('article');
+    $related_object = $object->attribute('related_contentobject_array');  
+    $this->assertTrue(is_array($related_object));
+    $this->assertEquals(count($related_object), 1);
+  }
+  
 }

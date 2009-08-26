@@ -31,7 +31,7 @@ class idObject extends ezpObject
 
       $this->setMainNode($parentNodeID);
 
-      $this->nodes = array($this->mainNode);
+      $this->nodes = (isset($this->mainNode)) ? array($this->mainNode) : array();
     }
   }
 
@@ -43,8 +43,8 @@ class idObject extends ezpObject
       $this->publish();
       $this->nodes[] = $this->mainNode;
     }
-    
-    return $this->mainNode->node;
+
+    return (isset($this->mainNode)) ? $this->mainNode->node : null ;
   }
   
   public function addNode($parent_node_id, $is_main = false)
@@ -67,6 +67,7 @@ class idObject extends ezpObject
       }
     }
     
+    $this->store();
   }
   
   public function fromeZContentObject($object)

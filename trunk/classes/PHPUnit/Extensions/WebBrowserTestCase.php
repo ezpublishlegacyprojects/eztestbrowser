@@ -70,7 +70,7 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
   public function __construct()
   {
     parent::__construct();
-    $this->browser = new sfWebBrowser(array(), $this->browser_adapter, array('cookies' => true, 'cookies_file' => 'cookies-zonin.txt', 'cookies_dir' => '/tmp'));
+    $this->browser = new sfWebBrowser(array(), $this->browser_adapter, array('cookies' => true, 'cookies_file' => 'cookies-browser.txt', 'cookies_dir' => '/tmp'));
   }
   
   public function __call($method, $parameters)
