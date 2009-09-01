@@ -30,3 +30,13 @@ News:
         body:           Corpo
         publish_date:   Data di pubblicazione
         date:           Data
+        
+Related:  
+  object_name:          <title>
+  attributes:
+    title:
+      name:             Title
+      type:             ezstring      
+    images:
+      name:             Images
+      type:             ezobjectrelationlist

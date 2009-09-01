@@ -69,7 +69,7 @@ class ezpYamlData
   {
     if ($this->object_parameters->has('id'))
     {
-      return idObjectRepository::retrieveById($this->object_parameters->get('id'));
+      return idObjectRepository::retrieveById(isset($this->content_object_ids[$this->object_parameters->get('id')]) ? $this->content_object_ids[$this->object_parameters->get('id')] : $this->object_parameters->get('id'));
     }
 
     return new idObject($class_identifier);
@@ -81,10 +81,19 @@ class ezpYamlData
 
     foreach ($this->object_parameters->get('attributes') as $name => $value)
     {
-      if (isset($this->content_object_ids[$value]) && isset($data_map[$name]) && $data_map[$name]->attribute('data_type_string') == 'ezobjectrelation')
+      if (isset($data_map[$name]))
       {
-        $value = $this->content_object_ids[$value];
+        switch($data_map[$name]->attribute('data_type_string'))
+        {
+          case 'ezobjectrelation':
+          case 'ezobjectrelationlist':
+          case 'ezxmltext':
+            $value = strtr($value, $this->content_object_ids);
+            break; 
+        }
+        
       }
+      
       $object->$name = $value;
     }
   }
@@ -129,6 +138,7 @@ class ezpYamlData
 
     foreach ($this->object_parameters->get('locations') as $index => $location)
     {
+      //echo "\tAdding location ".$index."....\n";
       $node = $object->addNode($this->getParentNodeId($location['parent_node_id']), $index == 'main');
 
       if (isset($location['priority']))
@@ -181,8 +191,11 @@ class ezpYamlData
 
     foreach ($data as $object_class => $objects)
     {
+      $object_class = trim($object_class, '_');
+      
       foreach ($objects as $remote_id => $object_parameters)
       {
+        echo 'A';
         $this->object_parameters->clear();
         $this->object_parameters->add(array_merge($object_parameters, array('remote_id' => $remote_id)));
         

@@ -204,4 +204,46 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals(count($related_object), 1);
   }
   
+  public function testOrderedLoader()
+  {
+    $objects = dirname(__FILE__) . '/fixtures/ordered_loader.yml';
+
+    $data = new ezpYamlData();
+    $data->loadObjectsData($objects);
+    
+    $object = eZContentObject::fetchByRemoteID('folder1');
+    $this->assertTrue($object instanceof eZContentObject);
+    
+    $object = eZContentObject::fetchByRemoteID('folder2');
+    $this->assertTrue($object instanceof eZContentObject);
+  }
+  
+  public function testLoadObjectRelationList()
+  {
+    $classes = dirname(__FILE__) . '/fixtures/classes.yml';
+    $objects = dirname(__FILE__) . '/fixtures/objectrelationlist.yml';
+
+    $data = new ezpYamlData();
+    $data->loadClassesData($classes);
+    $data->loadObjectsData($objects);
+    
+    $object = eZContentObject::fetchByRemoteID('related');
+    $data_map = $object->dataMap();
+    $content = $data_map['images']->content();
+    $this->assertEquals(count($content['relation_list']), 2); 
+  }
+  
+  public function testLoadXMLText()
+  {
+    $objects = dirname(__FILE__) . '/fixtures/xmltext.yml';
+
+    $data = new ezpYamlData();
+    $data->loadObjectsData($objects);
+    
+    $object = eZContentObject::fetchByRemoteID('embed');
+    $data_map = $object->dataMap();
+    $content = $data_map['intro']->content();
+    $this->assertTrue((bool)strstr($content->attribute('xml_data'), 'object_id="57"'));
+  }
+  
 }

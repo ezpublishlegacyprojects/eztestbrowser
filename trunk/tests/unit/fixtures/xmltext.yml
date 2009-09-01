@@ -1,0 +1,16 @@
+Image:
+  image:
+    locations:
+      main: { parent_node_id: 51 }
+    attributes:
+      name:  An image
+      image: '<?php echo dirname(__FILE__).'/images/test.gif' ?>'
+
+Article:
+  embed:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      title: An article
+      intro: >
+        <embed-inline view="embed-inline" href="ezobject://image" />
