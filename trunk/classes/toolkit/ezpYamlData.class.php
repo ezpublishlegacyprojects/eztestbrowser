@@ -69,7 +69,7 @@ class ezpYamlData
   {
     if ($this->object_parameters->has('id'))
     {
-      return idObjectRepository::retrieveById(isset($this->content_object_ids[$this->object_parameters->get('id')]) ? $this->content_object_ids[$this->object_parameters->get('id')] : $this->object_parameters->get('id'));
+      return idObjectRepository::retrieveById($this->object_parameters->get('id'));
     }
 
     return new idObject($class_identifier);
@@ -198,6 +198,11 @@ class ezpYamlData
         echo 'A';
         $this->object_parameters->clear();
         $this->object_parameters->add(array_merge($object_parameters, array('remote_id' => $remote_id)));
+        
+        if (isset($this->content_object_ids[$this->object_parameters->get('id')]))
+        {
+          $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
+        }
         
         $object = $this->createOrRetrieve($object_class);
         $object->hydrate($this->object_parameters->getAll());

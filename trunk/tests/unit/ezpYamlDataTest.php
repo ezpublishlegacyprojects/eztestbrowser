@@ -246,4 +246,15 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertTrue((bool)strstr($content->attribute('xml_data'), 'object_id="57"'));
   }
   
+  public function testAddLocation()
+  {
+    $objects = dirname(__FILE__) . '/fixtures/addlocation.yml';
+
+    $data = new ezpYamlData();
+    $data->loadObjectsData($objects);
+    
+    $object = eZContentObject::fetchByRemoteID('article');
+    $this->assertEquals(count($object->parentNodeIDArray()), 2);
+    
+  }
 }
