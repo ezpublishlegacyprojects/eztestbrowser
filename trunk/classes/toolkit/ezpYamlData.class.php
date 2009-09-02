@@ -36,6 +36,11 @@ class ezpYamlData
   private function setContentObjectMap($object)
   {
     $remote_id = $object->object->attribute('remote_id');
+    if (!$object->object->mainNodeID())
+    {
+      throw new Exception('Object doesn\'t have mainNodeID');
+    }
+    
     $this->object_ids[$remote_id] = $object->object->mainNodeID();
     $this->content_object_ids[$remote_id] = $object->id;
   }
@@ -138,9 +143,9 @@ class ezpYamlData
 
     foreach ($this->object_parameters->get('locations') as $index => $location)
     {
-      //echo "\tAdding location ".$index."....\n";
+      $this->output("\tAdding location $index....");      
       $node = $object->addNode($this->getParentNodeId($location['parent_node_id']), $index == 'main');
-
+      
       if (isset($location['priority']))
       {
         $node->setAttribute('priority', $location['priority']);
@@ -185,6 +190,14 @@ class ezpYamlData
     $this->object_parameters = new sfParameterHolder();
   }
   
+  private function output($message)
+  {
+    if (ezpTestRunner::$consoleInput->getOption('verbose')->value)
+    { 
+      echo $message."\n";
+    }
+  }
+  
   public function loadObjectsData($file)
   {
     $data = $this->parseYaml($file);
@@ -195,7 +208,7 @@ class ezpYamlData
       
       foreach ($objects as $remote_id => $object_parameters)
       {
-        echo 'A';
+        $this->output("creating $remote_id");
         $this->object_parameters->clear();
         $this->object_parameters->add(array_merge($object_parameters, array('remote_id' => $remote_id)));
         
