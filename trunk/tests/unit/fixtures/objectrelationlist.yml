@@ -19,3 +19,7 @@ Related:
     attributes:
       title: An article
       images: image1-image2
+    translations:
+      ita-IT:
+        title: Un articolo
+        images: image1-image2

@@ -1,12 +1,12 @@
 <?php
 /**
 * Copyright (C) 2009  Francesco trucchia
-* 
+*
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
 * (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,7 +17,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *
 * @author Francesco (cphp) Trucchia <ft@ideato.it>
-* 
+*
 */
 
 class idObject extends ezpObject
@@ -46,17 +46,17 @@ class idObject extends ezpObject
 
     return (isset($this->mainNode)) ? $this->mainNode->node : null ;
   }
-  
+
   public function addNode($parent_node_id, $is_main = false)
   {
     if ($is_main)
     {
       return $this->setMainNode($parent_node_id);
     }
-    
+
     return parent::addNode($parent_node_id);
   }
-  
+
   public function hydrate($object_parameters)
   {
     foreach ($object_parameters as $name => $value)
@@ -66,10 +66,18 @@ class idObject extends ezpObject
         $this->object->setAttribute($name, $value);
       }
     }
-    
+
     $this->store();
   }
-  
+
+  public function hydrateAttributes($attributes)
+  {
+    foreach ($attributes as $name => $value)
+    {
+      $this->$name = $value;
+    }
+  }
+
   public function fromeZContentObject($object)
   {
     $this->object = $object;
@@ -77,7 +85,7 @@ class idObject extends ezpObject
     $this->class = $object->contentClass();
   }
 
-  
+
   /**
      * Sets the property $name to $value.
      *
@@ -117,7 +125,7 @@ class idObject extends ezpObject
         }
     }
   }
-  
+
      /**
      * Adds a translation in language $newLanguageCode for object
      *
@@ -186,7 +194,7 @@ class idObject extends ezpObject
       }
       return $ret;
     }
-    
+
     private function processXmlTextData($xml, $attribute)
     {
       $parser = new eZSimplifiedXMLInputParser($this->object->attribute( 'id' ));

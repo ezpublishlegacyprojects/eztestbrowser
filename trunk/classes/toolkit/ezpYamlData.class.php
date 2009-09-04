@@ -1,12 +1,12 @@
 <?php
 /**
 * Copyright (C) 2009  Francesco trucchia
-* 
+*
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
 * (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,7 +17,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *
 * @author Francesco (cphp) Trucchia <ft@ideato.it>
-* 
+*
 */
 
 class ezpYamlData
@@ -27,12 +27,12 @@ class ezpYamlData
   protected $content_object_ids = array();
 
   protected $object_parameters;
-  
+
   private function parseYaml($file)
   {
     return sfYaml::load($file);
   }
-  
+
   private function setContentObjectMap($object)
   {
     $remote_id = $object->object->attribute('remote_id');
@@ -40,7 +40,7 @@ class ezpYamlData
     {
       throw new Exception('Object doesn\'t have mainNodeID');
     }
-    
+
     $this->object_ids[$remote_id] = $object->object->mainNodeID();
     $this->content_object_ids[$remote_id] = $object->id;
   }
@@ -80,27 +80,9 @@ class ezpYamlData
     return new idObject($class_identifier);
   }
 
-  private function loadAttributes($object)
+  public function remoteIdToId($object, &$attributes)
   {
-    $data_map = $object->dataMap;
-
-    foreach ($this->object_parameters->get('attributes') as $name => $value)
-    {
-      if (isset($data_map[$name]))
-      {
-        switch($data_map[$name]->attribute('data_type_string'))
-        {
-          case 'ezobjectrelation':
-          case 'ezobjectrelationlist':
-          case 'ezxmltext':
-            $value = strtr($value, $this->content_object_ids);
-            break; 
-        }
-        
-      }
-      
-      $object->$name = $value;
-    }
+    array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
   }
 
   private function loadTranslations($object)
@@ -114,7 +96,7 @@ class ezpYamlData
     {
       throw new Exception('You must set translations data in yaml');
     }
-    
+
     foreach ($this->object_parameters->get('translations') as $language_code => $attributes)
     {
       array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
@@ -143,9 +125,9 @@ class ezpYamlData
 
     foreach ($this->object_parameters->get('locations') as $index => $location)
     {
-      $this->output("\tAdding location $index....");      
+      $this->output("\tAdding location $index....");
       $node = $object->addNode($this->getParentNodeId($location['parent_node_id']), $index == 'main');
-      
+
       if (isset($location['priority']))
       {
         $node->setAttribute('priority', $location['priority']);
@@ -153,7 +135,7 @@ class ezpYamlData
       }
     }
   }
-  
+
   /**
    * Load related objects
    *
@@ -189,15 +171,15 @@ class ezpYamlData
   {
     $this->object_parameters = new sfParameterHolder();
   }
-  
+
   private function output($message)
   {
     if (ezpTestRunner::$consoleInput->getOption('verbose')->value)
-    { 
+    {
       echo $message."\n";
     }
   }
-  
+
   public function loadObjectsData($file)
   {
     $data = $this->parseYaml($file);
@@ -205,23 +187,25 @@ class ezpYamlData
     foreach ($data as $object_class => $objects)
     {
       $object_class = trim($object_class, '_');
-      
+
       foreach ($objects as $remote_id => $object_parameters)
       {
         $this->output("creating $remote_id");
         $this->object_parameters->clear();
         $this->object_parameters->add(array_merge($object_parameters, array('remote_id' => $remote_id)));
-        
+
         if (isset($this->content_object_ids[$this->object_parameters->get('id')]))
         {
           $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
         }
-        
+
         $object = $this->createOrRetrieve($object_class);
+        $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
+
         $object->hydrate($this->object_parameters->getAll());
+        $object->hydrateAttributes($this->object_parameters->get('attributes'));
 
         $this->loadLocations($object);
-        $this->loadAttributes($object);
         $this->loadTranslations($object);
         $object->publish();
 
@@ -273,8 +257,15 @@ class ezpYamlData
 
 function remoteIdToId(&$value, $name, $parameters)
 {
-  if (isset($parameters['map'][$value]) && isset($parameters['data_map'][$name]) && $parameters['data_map'][$name]->attribute('data_type_string') == 'ezobjectrelation')
+  if (isset($parameters['data_map'][$name]))
   {
-    $value = $parameters['map'][$value];
+    switch($parameters['data_map'][$name]->attribute('data_type_string'))
+    {
+      case 'ezobjectrelation':
+      case 'ezobjectrelationlist':
+      case 'ezxmltext':
+        $value = strtr($value, $parameters['map']);
+        break;
+    }
   }
 }

@@ -1,17 +1,17 @@
 <?php
 
 class ezpYamlDataTest extends idDatabaseTestCase
-{ 
+{
   public function __construct()
   {
     parent::__construct();
     $this->setName('ezpYamlDataTest Tests');
   }
-  
+
   public function testLoadObjectsData()
   {
     $fixture = dirname(__FILE__) . '/fixtures/objects.yml';
-    
+
     $data = new ezpYamlData();
     $data->loadObjectsData($fixture);
 
@@ -46,7 +46,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals($class->attribute('contentobject_name'), '<title>');
     $this->assertTrue((bool)$class->attribute('is_container'));
     $this->assertTrue($class->inGroup('1'));
-    
+
     $attributes = $class->dataMap();
 
     $this->assertEquals($attributes['title']->name(), 'Title');
@@ -63,7 +63,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals($attributes['body']->name('ita-IT'), 'Corpo');
     $this->assertEquals($attributes['body']->attribute('data_type_string'), 'ezxmltext');
     $this->assertFalse((bool)$attributes['body']->attribute('is_required'));
-    
+
     $this->assertFalse((bool)$attributes['date']->attribute('is_required'));
   }
 
@@ -78,23 +78,23 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
     $folder_news = eZContentObject::fetchByRemoteID('folder_news')->mainNode();
     $childrens = $folder_news->children();
-    
+
     $this->assertEquals(count($childrens), 3);
     $this->assertEquals($childrens[0]->getName('ita-IT'), 'Notizia 3');
     $this->assertEquals($childrens[1]->getName('ita-IT'), 'Notizia 2');
     $this->assertEquals($childrens[2]->getName('ita-IT'), 'Notizia 1');
-    
+
     $attributes = $childrens[2]->datamap();
     $this->assertEquals(strtotime('today'), $attributes['publish_date']->attribute('data_int'));
     $this->assertEquals(date('m', strtotime('today')), $attributes['publish_date']->content()->month());
-    
+
     $this->assertEquals(date('m', strtotime('today')), $attributes['publish_date']->language('ita-IT')->content()->month());
     $this->assertEquals(date('d', strtotime('today')), $attributes['publish_date']->language('ita-IT')->content()->day());
 
     $attributes = $childrens[1]->datamap();
     $this->assertEquals(date('m', strtotime('today')), $attributes['date']->language('ita-IT')->content()->month());
     $this->assertEquals(date('d', strtotime('today')), $attributes['date']->language('ita-IT')->content()->day());
-    
+
   }
 
   public function testLoadRelatedObjectData()
@@ -110,7 +110,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals(57, $attributes['image']->attribute('data_int'));
     $this->assertEquals(57, $attributes['image']->language('ita-IT')->attribute('data_int'));
   }
-  
+
   public function testLoadContentRootData()
   {
     $objects = dirname(__FILE__) . '/fixtures/content_root.yml';
@@ -120,9 +120,9 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
     $homepage = eZContentObject::fetchByRemoteID('homepage');
     eZContentObject::clearCache(array($homepage->attribute('id')));
-    
+
     $this->assertEquals('Home Page', $homepage->name());
-    
+
     $attributes = $homepage->datamap();
     $this->assertEquals('Short description', trim(strip_tags($attributes['short_description']->content()->attribute('output')->attribute('output_text')), "\n"));
     $this->assertEquals('Description', trim(strip_tags($attributes['description']->content()->attribute('output')->attribute('output_text')), "\n"));
@@ -142,7 +142,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
     catch (Exception $e)
     {}
   }
-  
+
   public function testLoadMultipleLocationData()
   {
     $objects = dirname(__FILE__) . '/fixtures/multiple_locations.yml';
@@ -153,71 +153,71 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $article = eZContentObject::fetchByRemoteID('la_famiglia');
     eZContentObject::clearCache(array($article->attribute('id')));
     $assigned_nodes = $article->attribute('assigned_nodes');
-    
+
     $this->assertEquals(59, $assigned_nodes[0]->attribute('parent_node_id'));
     $this->assertEquals(60, $assigned_nodes[1]->attribute('parent_node_id'));
     $this->assertEquals(2, $assigned_nodes[2]->attribute('parent_node_id'));
     $this->assertTrue($assigned_nodes[2]->isMain());
-    
-    
+
+
     $menu_top = eZContentObject::fetchByRemoteID('folder_menu_top');
     $this->assertEquals(3, $menu_top->mainNode()->childrenCount());
-    
+
     $menu_left = eZContentObject::fetchByRemoteID('folder_menu_left');
     $this->assertEquals(2, $menu_left->mainNode()->childrenCount());
-    
-    
+
+
     $parameters = array('Language' => 'eng-GB');
     $childrens_count = eZContentObjectTreeNode::subTreeCountByNodeID($parameters, $menu_top->mainNode()->attribute('node_id'));
     $this->assertEquals(3, $childrens_count);
-    
+
     $parameters = array('Language' => 'ita-IT');
     $childrens_count = eZContentObjectTreeNode::subTreeCountByNodeID($parameters, $menu_top->mainNode()->attribute('node_id'));
     $this->assertEquals(1, $childrens_count);
   }
-  
+
   public function testLoadPriorityData()
   {
     $objects = dirname(__FILE__) . '/fixtures/priority.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
-    
+
     $article = eZContentObject::fetchByRemoteID('la_famiglia');
-    $this->assertEquals(10, $article->mainNode()->attribute('priority'));  
-    
+    $this->assertEquals(10, $article->mainNode()->attribute('priority'));
+
     $assigned_nodes = $article->attribute('assigned_nodes');
-    $this->assertEquals(10, $assigned_nodes[1]->attribute('priority'));  
-    $this->assertEquals(-1, $assigned_nodes[0]->attribute('priority'));  
+    $this->assertEquals(10, $assigned_nodes[1]->attribute('priority'));
+    $this->assertEquals(-1, $assigned_nodes[0]->attribute('priority'));
   }
-  
+
   public function testLoadRelatedObjects()
   {
     $objects = dirname(__FILE__) . '/fixtures/related.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
-    
+
     $object = eZContentObject::fetchByRemoteID('article');
-    $related_object = $object->attribute('related_contentobject_array');  
+    $related_object = $object->attribute('related_contentobject_array');
     $this->assertTrue(is_array($related_object));
     $this->assertEquals(count($related_object), 1);
   }
-  
+
   public function testOrderedLoader()
   {
     $objects = dirname(__FILE__) . '/fixtures/ordered_loader.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
-    
+
     $object = eZContentObject::fetchByRemoteID('folder1');
     $this->assertTrue($object instanceof eZContentObject);
-    
+
     $object = eZContentObject::fetchByRemoteID('folder2');
     $this->assertTrue($object instanceof eZContentObject);
   }
-  
+
   public function testLoadObjectRelationList()
   {
     $classes = dirname(__FILE__) . '/fixtures/classes.yml';
@@ -226,35 +226,39 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $data = new ezpYamlData();
     $data->loadClassesData($classes);
     $data->loadObjectsData($objects);
-    
+
     $object = eZContentObject::fetchByRemoteID('related');
     $data_map = $object->dataMap();
     $content = $data_map['images']->content();
-    $this->assertEquals(count($content['relation_list']), 2); 
+    $this->assertEquals(count($content['relation_list']), 2);
+
+    $content_ita = $data_map['images']->language('ita-IT')->content();
+    $this->assertEquals(count($content_ita['relation_list']), 2);
+
   }
-  
+
   public function testLoadXMLText()
   {
     $objects = dirname(__FILE__) . '/fixtures/xmltext.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
-    
+
     $object = eZContentObject::fetchByRemoteID('embed');
     $data_map = $object->dataMap();
     $content = $data_map['intro']->content();
     $this->assertTrue((bool)strstr($content->attribute('xml_data'), 'object_id="57"'));
   }
-  
+
   public function testAddLocation()
   {
     $objects = dirname(__FILE__) . '/fixtures/addlocation.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
-    
+
     $object = eZContentObject::fetchByRemoteID('article');
     $this->assertEquals(count($object->parentNodeIDArray()), 2);
-    
+
   }
 }
