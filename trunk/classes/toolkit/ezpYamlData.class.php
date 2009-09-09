@@ -38,7 +38,7 @@ class ezpYamlData
     $remote_id = $object->object->attribute('remote_id');
     if (!$object->object->mainNodeID())
     {
-      throw new Exception('Object doesn\'t have mainNodeID');
+      throw new Exception('Object '.$remote_id.' doesn\'t have mainNodeID');
     }
 
     $this->object_ids[$remote_id] = $object->object->mainNodeID();
@@ -167,14 +167,15 @@ class ezpYamlData
     }
   }
 
-  public function __construct()
+  public function __construct($verbose = false)
   {
+    $this->verbose = $verbose;
     $this->object_parameters = new sfParameterHolder();
   }
 
   private function output($message)
   {
-    if (ezpTestRunner::$consoleInput->getOption('verbose')->value)
+    if ($this->verbose)
     {
       echo $message."\n";
     }
@@ -223,13 +224,25 @@ class ezpYamlData
     foreach ($data as $name => $class_data)
     {
       $class = new ezpClass($name, $this->getIdentifierFromName($name), $class_data['object_name']);
-      $class->class->setAttribute('is_container', (bool)$class_data['is_container']);
+      if (isset($class_data['is_container']))
+      {
+        $class->class->setAttribute('is_container', (bool)$class_data['is_container']);
+      }
 
       foreach ($class_data['attributes'] as $identifier => $attribute_data)
       {
         $attribute = $class->add($attribute_data['name'], $identifier, $attribute_data['type']);
-        $this->setClassAttribute($attribute, 'can_translate', $attribute_data['can_translate']);
-        $this->setClassAttribute($attribute, 'is_required', $attribute_data['is_required']);
+
+        if (isset($attribute_data['can_translate']))
+        {
+          $this->setClassAttribute($attribute, 'can_translate', $attribute_data['can_translate']);
+        }
+
+        if (isset($attribute_data['is_required']))
+        {
+          $this->setClassAttribute($attribute, 'is_required', $attribute_data['is_required']);
+        }
+
         $attribute->store();
       }
 
