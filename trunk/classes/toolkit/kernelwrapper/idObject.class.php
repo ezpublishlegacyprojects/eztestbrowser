@@ -108,6 +108,7 @@ class idObject extends ezpObject
             case 'ezobjectrelation':
             case 'ezobjectrelationlist':
             case 'ezinteger':
+            case 'ezboolean':
               $attribute->fromString($value);
               break;
             default:

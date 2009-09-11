@@ -38,6 +38,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   
   protected $fixtures_objects = null;
   
+  abstract protected function fixturesSetUp();
+  
   protected function initialize()
   {
     $this->sqlFiles = array(realpath($this->kernel_schema), realpath($this->cleandata));
@@ -55,6 +57,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   {
     if(!self::$load_once || self::$fixtures_hash != $this->getFixturesHash())
     {
+      $this->fixturesSetUp();
+      
       self::$fixtures_hash = $this->getFixturesHash();
       self::$load_once = true;
       

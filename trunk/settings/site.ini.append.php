@@ -1,7 +1,7 @@
 <?php /*#?ini charset="utf-8"?
 
 [DebugSettings]
-DebugOutput=disabled
+DebugOutput=enabled
 DebugRedirection=disabled
 
 [TemplateSettings]
