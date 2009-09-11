@@ -7,6 +7,11 @@ class FunctionalTest extends eZBrowserTestCase
   
   protected $fixtures_objects = 'extension/eztestbrowser/tests/functional/fixtures/objects.yml';
   
+  protected function fixturesSetup()
+  {
+
+  }
+  
   public function testNewsList()
   {
     $ini = eZINI::instance();
