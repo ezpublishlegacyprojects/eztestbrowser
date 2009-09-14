@@ -166,6 +166,32 @@ class ezpYamlData
       }
     }
   }
+  
+  /**
+   * load url aliases for object
+   *
+   * @param idObject $object
+   */
+  private function loadUrlAlias($object)
+  {
+    if (!$this->object_parameters->has('url_alias'))
+    {
+      return;
+    }
+    
+    if (!is_array($this->object_parameters->get('url_alias')))
+    {
+      throw new Exception('You must set url_alias data in yaml');
+    }
+    
+    $language = eZContentLanguage::fetchByLocale( $object->currentLanguage(), false );
+    foreach ($this->object_parameters->get('url_alias') as $url_alias)
+    {
+      $alias = eZURLAliasML::create($url_alias['value'], 'eznode:'.$object->mainNode()->attribute('node_id'), $url_alias['parent'], $language->attribute('id'));
+      $alias->store();
+    }
+    
+  }
 
   public function __construct($verbose = false)
   {
@@ -211,6 +237,7 @@ class ezpYamlData
         $object->publish();
 
         $this->loadRelated($object);
+        $this->loadUrlAlias($object);
         $this->setContentObjectMap($object);
       }
     }
