@@ -17,6 +17,7 @@ class ideatoTestSuite extends ezpDatabaseTestSuite
     $this->addTestSuite('ezpYamlDataTest');
     $this->addTestSuite('idObjectRepositoryTest');
     $this->addTestSuite('FunctionalTest');
+    $this->addTestSuite('idObjectTest');
   }
   
   public static function suite()

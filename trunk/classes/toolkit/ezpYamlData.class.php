@@ -66,6 +66,13 @@ class ezpYamlData
       {
         return $this->object_ids[$parent_node_id];
       }
+
+      $object = eZContentObject::fetchByRemoteID($parent_node_id);
+
+      if ($object)
+      {
+        return $object->mainNode()->attribute('node_id');
+      }
     }
     return $parent_node_id;
   }
@@ -207,38 +214,76 @@ class ezpYamlData
     }
   }
 
-  public function loadObjectsData($file)
+  /**
+   * Parse yaml file and build eZ Objects
+   *
+   * @param string $file
+   */
+  public function loadObjectsDataFromYaml($file)
   {
     $data = $this->parseYaml($file);
+    $this->buildObjects($data);
+  }
 
+  /**
+   * Parse yaml file and build ez objects
+   *
+   * @param string $file
+   * @deprecated
+   * @see loadObjectsDataFromYaml()
+   */
+  public function loadObjectsData($file)
+  {
+    $this->loadObjectsDataFromYaml($file);
+  }
+
+/**
+ * Build eZ Publish object
+ *
+ * @param array $object_parameters
+ * @return idObject
+ */
+  protected function buildObject($object_parameters)
+  {
+    $this->object_parameters->clear();
+    $this->object_parameters->add($object_parameters);
+
+    $this->output("creating ".$this->object_parameters->get('remote_id'));
+    
+
+    if (isset($this->content_object_ids[$this->object_parameters->get('id')]))
+    {
+      $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
+    }
+
+    $object = $this->createOrRetrieve($this->object_parameters->get('class_identifier'));
+    $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
+
+    $object->hydrate($this->object_parameters->getAll());
+    $object->hydrateAttributes($this->object_parameters->get('attributes'));
+
+    $this->loadLocations($object);
+    $this->loadTranslations($object);
+    $object->publish();
+
+    $this->loadRelated($object);
+    $this->loadUrlAlias($object);
+    $this->setContentObjectMap($object);
+
+    return $object;
+  }
+
+  protected function buildObjects($data)
+  {
     foreach ($data as $object_class => $objects)
     {
       $object_class = trim($object_class, '_');
 
       foreach ($objects as $remote_id => $object_parameters)
       {
-        $this->output("creating $remote_id");
-        $this->object_parameters->clear();
-        $this->object_parameters->add(array_merge($object_parameters, array('remote_id' => $remote_id)));
-
-        if (isset($this->content_object_ids[$this->object_parameters->get('id')]))
-        {
-          $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
-        }
-
-        $object = $this->createOrRetrieve($object_class);
-        $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
-
-        $object->hydrate($this->object_parameters->getAll());
-        $object->hydrateAttributes($this->object_parameters->get('attributes'));
-
-        $this->loadLocations($object);
-        $this->loadTranslations($object);
-        $object->publish();
-
-        $this->loadRelated($object);
-        $this->loadUrlAlias($object);
-        $this->setContentObjectMap($object);
+        $object_parameters['class_identifier'] = $object_class;
+        $object_parameters['remote_id'] = $remote_id;
+        $this->buildObject($object_parameters);
       }
     }
   }

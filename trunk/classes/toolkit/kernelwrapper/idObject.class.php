@@ -211,4 +211,33 @@ class idObject extends ezpObject
       }
       return $xml;
     }
+
+    /**
+     * Returns the value of the property $name.
+     *
+     * @throws ezcBasePropertyNotFoundException if the property does not exist.
+     * @param string $name
+     * @ignore
+     */
+    public function __get($name) 
+    {
+
+      switch ($name) {
+        case 'dataMap':
+          if ( isset($this->object) )
+          {
+            return $this->object->dataMap();
+          }
+          return array();
+
+        default:
+          
+          if (isset( $this->dataMap[$name]))
+          {
+            return new idAttribute($this->dataMap[$name]);
+          }
+
+          return $this->object->attribute( $name );
+      }
+    }
 }

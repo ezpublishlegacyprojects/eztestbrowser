@@ -37,6 +37,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   protected $fixtures_classes = null;
   
   protected $fixtures_objects = null;
+
+  protected $verbose = false;
   
   abstract protected function fixturesSetUp();
   
@@ -92,7 +94,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
         throw new Exception("The objects fixtures file $objects_fixtures does not exists");
       }
 
-      $data = new ezpYamlData();
+      $data = new ezpYamlData($this->verbose);
       $data->loadClassesData($classes_fixtures);
       $data->loadObjectsData($objects_fixtures);
 
