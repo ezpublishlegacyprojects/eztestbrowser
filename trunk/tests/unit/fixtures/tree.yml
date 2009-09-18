@@ -10,41 +10,41 @@ News:
   news1:
     locations:
       main: { parent_node_id: folder_news }
-    published: '<?php echo strtotime('-2 day')?>'
+    published: '<?php echo strtotime("-2 day")?>'
     attributes:
       title: News 1
       teaser: teaser news 1
       body: body 
-      publish_date: '<?php echo strtotime('today');?>'
+      publish_date: '<?php echo strtotime("today");?>'
     translations:
       ita-IT:
         title: Notizia 1
-        publish_date: '<?php echo strtotime('today');?>' 
+        publish_date: '<?php echo strtotime("today");?>'
   news2:
     locations:
       main: { parent_node_id: folder_news }
-    published: '<?php echo strtotime('-1 day')?>'
+    published: '<?php echo strtotime("-1 day")?>'
     attributes:
       title: News 2
       teaser: teaser news 2
       body: body 
-      publish_date: '<?php echo strtotime('today');?>'
-      date: '<?php echo strtotime('today');?>'
+      publish_date: '<?php echo strtotime("today");?>'
+      date: '<?php echo strtotime("today");?>'
     translations:
       ita-IT:
         title: Notizia 2
   news3:
     locations:
       main: { parent_node_id: folder_news }
-    published: '<?php echo strtotime('today')?>'
+    published: '<?php echo strtotime("today")?>'
     attributes:
       title: News 3
       teaser: teaser news 3
       body: body
-      publish_date: '<?php echo strtotime('today');?>' 
+      publish_date: '<?php echo strtotime("today");?>'
     translations:
       ita-IT:
         title: Notizia 3
         teaser: teaser news 3
         body: body
-        publish_date: '<?php echo strtotime('today');?>' 
+        publish_date: '<?php echo strtotime("today");?>'

@@ -3,4 +3,4 @@ Folder:
     locations: 2
     attributes:
       name: Menu Top
-      short_description: Objects contained in this folder will be showed in the top menu
+      short_description: 'Objects contained in this folder will be showed in the top menu'

@@ -80,9 +80,19 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $childrens = $folder_news->children();
 
     $this->assertEquals(count($childrens), 3);
-    $this->assertEquals($childrens[0]->getName('ita-IT'), 'Notizia 3');
-    $this->assertEquals($childrens[1]->getName('ita-IT'), 'Notizia 2');
-    $this->assertEquals($childrens[2]->getName('ita-IT'), 'Notizia 1');
+
+    $attributes = $childrens[0]->datamap();
+    $this->assertEquals('Notizia 3', $attributes['title']->language('ita-IT')->content());
+
+    $attributes = $childrens[1]->datamap();
+    $this->assertEquals('Notizia 2', $attributes['title']->language('ita-IT')->content());
+
+    $attributes = $childrens[2]->datamap();
+    $this->assertEquals('Notizia 1', $attributes['title']->language('ita-IT')->content());
+
+//    $this->assertEquals('Notizia 3', $childrens[0]->getName('ita-IT'));
+//    $this->assertEquals('Notizia 2', $childrens[1]->getName('ita-IT'));
+//    $this->assertEquals('Notizia 1', $childrens[2]->getName('ita-IT'));
 
     $attributes = $childrens[2]->datamap();
     $this->assertEquals(strtotime('today'), $attributes['publish_date']->attribute('data_int'));
@@ -107,8 +117,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $article = eZContentObject::fetchByRemoteID('la_famiglia')->mainNode();
 
     $attributes = $article->datamap();
-    $this->assertEquals(57, $attributes['image']->attribute('data_int'));
-    $this->assertEquals(57, $attributes['image']->language('ita-IT')->attribute('data_int'));
+    $this->assertEquals(62, $attributes['image']->attribute('data_int'));
+    $this->assertEquals(62, $attributes['image']->language('ita-IT')->attribute('data_int'));
   }
 
   public function testLoadContentRootData()
