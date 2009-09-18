@@ -4,13 +4,18 @@ class idAttribute
 {
   protected $attribute;
 
-  public function __construct(eZContentAttribute $attribute)
+  public function __construct(eZContentObjectAttribute $attribute)
   {
     $this->attribute = $attribute;
   }
 
   public function __toString()
   {
+    if (method_exists($this->attribute, 'toString'))
+    {
+      return $this->attribute->toString();
+    }
+
     return $this->attribute->content();
   }
 

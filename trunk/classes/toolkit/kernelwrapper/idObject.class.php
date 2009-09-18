@@ -240,4 +240,9 @@ class idObject extends ezpObject
           return $this->object->attribute( $name );
       }
     }
+
+    public function setMainLocation($node_id)
+    {
+      $this->addNode($node_id, true);
+    }
 }

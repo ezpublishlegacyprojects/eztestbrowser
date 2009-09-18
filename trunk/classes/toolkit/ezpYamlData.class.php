@@ -30,6 +30,11 @@ class ezpYamlData
 
   private function parseYaml($file)
   {
+    if (!file_exists($file))
+    {
+      throw new Exception('File '. $file .' does not exist');
+    }
+    
     return sfYaml::load($file);
   }
 
@@ -58,7 +63,7 @@ class ezpYamlData
     return strtolower($name);
   }
 
-  private function getParentNodeId($parent_node_id)
+  protected function getParentNodeId($parent_node_id)
   {
     if ((int)$parent_node_id == 0)
     {
@@ -77,7 +82,7 @@ class ezpYamlData
     return $parent_node_id;
   }
 
-  private function createOrRetrieve($class_identifier = null)
+  protected function createOrRetrieve($class_identifier = null)
   {
     if ($this->object_parameters->has('id'))
     {
