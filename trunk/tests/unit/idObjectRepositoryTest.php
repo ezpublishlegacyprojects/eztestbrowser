@@ -24,15 +24,18 @@ class idObjectRepositoryTest extends ezpDatabaseTestCase
     $folder->short_description = "123";
     $folder->publish();
 
+
     $object = idObjectRepository::retrieveById($folder->id);
+
     $this->assertTrue($object instanceof idObject);
     $this->assertTrue($object->id == $folder->id);
-    $this->assertTrue($object->name == $folder->name);
+    $this->assertEquals($object->name->__toString(), __FUNCTION__);
 
     $object = idObjectRepository::retrieveByNodeId($folder->main_node_id);
+
     $this->assertTrue($object instanceof idObject);
     $this->assertTrue($object->id == $folder->id);
-    $this->assertTrue($object->name == $folder->name);
+    $this->assertEquals($object->name->__toString(), __FUNCTION__);
   }
 }
 

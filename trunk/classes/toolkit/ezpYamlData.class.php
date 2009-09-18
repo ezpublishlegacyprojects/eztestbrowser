@@ -112,7 +112,6 @@ class ezpYamlData
     foreach ($this->object_parameters->get('translations') as $language_code => $attributes)
     {
       array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
-      eZContentLanguage::fetchByLocale($language_code, true);
       $object->addTranslation($language_code, $attributes);
     }
   }

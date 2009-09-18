@@ -18,6 +18,19 @@ class idObjectTest extends ezpDatabaseTestCase
     $this->assertEquals($object->title->__toString(), 'New article test');
     $this->assertEquals($object->title->ita_IT->__toString(), 'Nuvo articolo di test');
   }
+
+  public function testAddLanguage()
+  {
+    eZContentLanguage::fetchByLocale('ita-IT', true);
+
+    $object = new idObject('article', 2);
+    $object->title = 'New article test';    
+
+    $this->assertEquals('New article test', $object->title->eng_GB->__toString());    
+
+    $object->title->ita_IT = 'Nuovo articolo di test 2';
+    $this->assertEquals('Nuovo articolo di test 2', $object->title->ita_IT->__toString());
+  }
 }
 
 ?>

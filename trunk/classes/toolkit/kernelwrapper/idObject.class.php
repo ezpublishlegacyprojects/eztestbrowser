@@ -83,6 +83,8 @@ class idObject extends ezpObject
     $this->object = $object;
     $this->data_map = $this->object->dataMap();
     $this->class = $object->contentClass();
+
+    return $this;
   }
 
 
@@ -136,6 +138,8 @@ class idObject extends ezpObject
      */
     public function addTranslation( $newLanguageCode, $translationData )
     {
+        eZContentLanguage::fetchByLocale($newLanguageCode, true);
+        
         // Make sure to refresh the objects data.
         $this->refresh();
 
@@ -234,7 +238,7 @@ class idObject extends ezpObject
           
           if (isset( $this->dataMap[$name]))
           {
-            return new idAttribute($this->dataMap[$name]);
+            return new idAttribute($this->dataMap[$name], $this);
           }
 
           return $this->object->attribute( $name );
@@ -244,5 +248,11 @@ class idObject extends ezpObject
     public function setMainLocation($node_id)
     {
       $this->addNode($node_id, true);
+    }
+
+    public function addLanguage($language_code)
+    {
+      $this->addTranslation($language_code);
+      $this->publish();
     }
 }
