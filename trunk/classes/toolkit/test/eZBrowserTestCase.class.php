@@ -57,10 +57,10 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
    */
   protected function setUp()
   {
+    $this->fixturesSetUp();
+
     if(!self::$load_once || self::$fixtures_hash != $this->getFixturesHash())
-    {
-      $this->fixturesSetUp();
-      
+    { 
       self::$fixtures_hash = $this->getFixturesHash();
       self::$load_once = true;
       
