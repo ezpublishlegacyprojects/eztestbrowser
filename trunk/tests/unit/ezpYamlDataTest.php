@@ -117,8 +117,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $article = eZContentObject::fetchByRemoteID('la_famiglia')->mainNode();
 
     $attributes = $article->datamap();
-    $this->assertEquals(62, $attributes['image']->attribute('data_int'));
-    $this->assertEquals(62, $attributes['image']->language('ita-IT')->attribute('data_int'));
+    $this->assertEquals(57, $attributes['image']->attribute('data_int'));
+    $this->assertEquals(57, $attributes['image']->language('ita-IT')->attribute('data_int'));
   }
 
   public function testLoadContentRootData()
@@ -142,7 +142,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
   public function testLoadMultipleLocationDataExceptions()
   {
     $objects = dirname(__FILE__) . '/fixtures/multiple_locations_exceptions2.yml';
-
+    
     try
     {
       $data = new ezpYamlData();

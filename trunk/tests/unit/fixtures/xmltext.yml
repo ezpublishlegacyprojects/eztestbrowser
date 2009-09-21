@@ -1,5 +1,5 @@
 Image:
-  image:
+  image1:
     locations:
       main: { parent_node_id: 51 }
     attributes:
@@ -13,4 +13,4 @@ Article:
     attributes:
       title: An article
       intro: >
-        <embed-inline view="embed-inline" href="ezobject://image" />
+        <embed-inline view="embed-inline" href="ezobject://image1" />

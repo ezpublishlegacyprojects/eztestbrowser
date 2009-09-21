@@ -323,14 +323,17 @@ class ezpYamlData
       }
 
       $attributes = $class->class->dataMap();
-
+      $this->output('class name: '.$name);
       foreach ($class_data['translations'] as $language_code => $language_data)
       {
         eZContentLanguage::fetchByLocale($language_code, true);
+        
         $class->class->setName($language_data['name'], $language_code);
-
+        ezContentClassAttribute::removeObject($def);
+        
         foreach ($language_data['attributes'] as $identifier => $name)
         {
+          $this->output('setting attribute name: '.$identifier);
           $attributes[$identifier]->setName($name, $language_code);
           $attributes[$identifier]->store();
         }
