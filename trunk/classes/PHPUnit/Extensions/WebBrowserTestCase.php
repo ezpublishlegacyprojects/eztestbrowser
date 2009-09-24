@@ -43,8 +43,6 @@
  * @version    SVN: $Id$
  */
 
-set_include_path(get_include_path().':/var/www');
-
 require_once 'PHPUnit/Framework/TestCase.php';
 require_once dirname(__FILE__).'/WebBrowserTestCase/Vendor/sfWebBrowser/lib/sfCurlAdapter.class.php';
 require_once dirname(__FILE__).'/WebBrowserTestCase/Vendor/util/sfDomCssSelector.class.php';
@@ -66,14 +64,30 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
 {
   protected $browser;
   protected $browser_adapter = null;
+  protected $browser_adapter_options = array('cookies' => true, 'cookies_file' => 'cookies-browser.txt', 'cookies_dir' => '/tmp');
   
   public function __construct()
   {
     parent::__construct();
-    $this->browser = new sfWebBrowser(array(), $this->browser_adapter, array('cookies' => true, 'cookies_file' => 'cookies-browser.txt', 'cookies_dir' => '/tmp'));
+    $this->initializeBrowser();
   }
-  
-  public function __call($method, $parameters)
+
+  /**
+   * Init method for Browser
+   */
+  protected function initializeBrowser()
+  {
+    $this->browser = new sfWebBrowser(array(), $this->browser_adapter, $this->browser_adapter_options);
+  }
+
+  /**
+   * Proxy method to sfWebBrowser class
+   *
+   * @param string $method
+   * @param array $parameters
+   * @return mixed
+   */
+  protected function __call($method, $parameters)
   {
     return call_user_func_array(array($this->browser, $method), $parameters);
   }
@@ -86,7 +100,7 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
    * @param  array  $options   Options for the current test
    *
    */
-  public function checkElementResponse($selector, $value = true, $options = array())
+  protected function checkElementResponse($selector, $value = true, $options = array())
   {
     if (is_null($this->getResponseDom()))
     {
@@ -145,7 +159,7 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
    *
    * @return sfTestFunctionalBase|sfTester
    */
-  public function responseContains($text)
+  protected function responseContains($text)
   {
     $this->assertRegExp('/'.preg_quote($text, '/').'/', $this->getResponseText(), sprintf('response contains "%s"', substr($text, 0, 40)));   
   }
