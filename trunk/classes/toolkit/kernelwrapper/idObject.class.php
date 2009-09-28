@@ -113,6 +113,11 @@ class idObject extends ezpObject
             case 'ezboolean':
               $attribute->fromString($value);
               break;
+            case 'ezxmltext':
+              if (mb_detect_encoding($value) != 'UTF-8')
+              {
+                $value = utf8_encode($value);
+              }
             default:
               parent::__set($name, $value);
               break;

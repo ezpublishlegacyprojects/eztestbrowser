@@ -30,7 +30,7 @@ class idAttribute
 
     $language_code = str_replace('_', '-', $name);
     $language = eZContentLanguage::fetchByLocale($language_code);
-
+    
     if ($language)
     { 
       return new idAttribute($this->attribute->language($language_code));
@@ -65,7 +65,14 @@ class idAttribute
         $attribute = $this->attribute->language($language_code);
       }
       
-      $attribute->fromString($value);
+      switch( $attribute->attribute( 'data_type_string' ) )
+      {
+        case 'ezxmltext':
+            $value = $this->processXmlTextData( $value, $attribute );
+        default:
+            $attribute->setAttribute('data_text', $value);
+      }
+
       return $attribute->store();
     }
 
@@ -81,6 +88,22 @@ class idAttribute
   public function __call( $name, $arguments )
   {
     return call_user_func_array(array($this->attribute, $name), $arguments);
+  }
+
+  private function processXmlTextData($xml, $attribute)
+  {
+      $parser = new eZSimplifiedXMLInputParser($this->object->attribute( 'id' ));
+      $parser->ParseLineBreaks = true;
+
+      $xml = $parser->process($xml);
+      $xml = eZXMLTextType::domString($xml);
+
+      $urlIdArray = $parser->getUrlIDArray();
+      if (count($urlIdArray) > 0)
+      {
+        eZSimplifiedXMLInput::updateUrlObjectLinks($attribute, $urlIdArray);
+      }
+      return $xml;
   }
 }
 
