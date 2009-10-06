@@ -32,8 +32,24 @@ foreach ( $autoloadArray as $class => $file )
     }
 }
 
+$cli = eZCLI::instance();
 
+$script = eZScript::instance( array( 'description' => ( "eZ Publish Test Runner\n\n" .
+                                                         "sets up an eZ Publish testing environment" .
+                                                         "\n" ),
+                                      'use-session' => false,
+                                      'use-modules' => true,
+                                      'debug-output' => true,
+                                      'use-extensions' => true ) );
+
+$script->startup();
+// $options = $script->getOptions();
+$script->initialize();
+
+// Avoids Fatal error: eZ Publish did not finish its request if die() is used.
 eZExecution::setCleanExit();
+
 ezpTestRunner::main();
 
+$script->shutdown();
 ?>

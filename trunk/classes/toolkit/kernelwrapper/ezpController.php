@@ -6,6 +6,7 @@ class ezpController
   var $scriptStartTime;
   var $warningList = array();
   var $access;
+  var $tempalte_result = null;
 
   public function __destruct()
   {
@@ -21,92 +22,6 @@ class ezpController
     unset($GLOBALS['eZDebugWarning']);
     unset($GLOBALS['eZDebugError']);
 
-  }
-
-  public function __construct()
-  {
-    $this->addGlobal( 'eZRedirection', false );        
-    $this->ini = eZINI::instance();
-    eZLocale::setIsDebugEnabled( (bool) $this->ini->variable( 'RegionalSettings', 'Debug' ) == 'enabled' );
-    eZSys::init( 'index.php', $this->ini->variable( 'SiteAccessSettings', 'ForceVirtualHost' ) == 'true' );
-
-    $this->scriptStartTime = microtime( true );
-    $this->use_external_css = true;
-    $this->show_page_layout = true;
-    $this->moduleRunRequired = true;
-    $this->policyCheckRequired = true;
-    $this->urlTranslatorAllowed = true;
-    $this->validityCheckRequired = false;
-    $this->userObjectRequired = true;
-    $this->sessionRequired = true;
-    $this->dbRequired = true;
-    $this->noCacheAdviced = true;
-    $this->siteDesignOverride = false;
-    $this->policyCheckOmitList = array();
-    $this->moduleRepositories = eZModule::activeModuleRepositories();
-    $this->httpCharset = eZTextCodec::httpCharset();
-    $this->uri = eZURI::instance( eZSys::requestURI() );
-    $this->tplINI = eZINI::instance( 'template.ini' );
-    $this->db = false;
-    $this->languageCode = eZLocale::instance()->httpLocaleCode();
-    $this->policyCheckViewMap = array();
-    $this->templateResult = null;
-    
-    $this->headerList = array( 'Expires'          => 'Mon, 26 Jul 1997 05:00:00 GMT',
-                               'Last-Modified'    => gmdate( 'D, d M Y H:i:s' ) . ' GMT',
-                               'Cache-Control'    => 'no-cache, must-revalidate',
-                               'Pragma'           => 'no-cache',
-                               'X-Powered-By'     => 'eZ Publish',
-                               'Content-Type'     => 'text/html; charset=' . $this->httpCharset,
-                               'Served-by'        => $_SERVER["SERVER_NAME"],
-                               'Content-language' => $this->languageCode );
-
-    $this->site = array( 'title'      => $this->ini->variable( 'SiteSettings', 'SiteName' ),
-                         'design'     => $this->ini->variable( 'DesignSettings', 'SiteDesign' ),
-                         'http_equiv' => array( 'Content-Type'    => 'text/html; charset=' . $this->httpCharset,
-                                                'Content-language' => $this->languageCode ) );
-                   
-    $this->initializeSiteBasics();
-    
-    $this->initializeCodePagePermissions();
-    
-    $this->setTimezone();
-
-    self::checkPHPVersion();
-    self::ignoreUserAbort();
-    self::setErrorReporting();
-    self::initializeCallBackForSession($this->ini);
-
-    $this->addGlobal( 'eZSiteBasics', $this->siteBasics, true );
-    $this->addGlobal( 'eZGlobalRequestURI', eZSys::serverVariable( 'REQUEST_URI' ) );
-    $this->addGlobal( 'eZRequestedURI', $this->uri );
-    
-    // Initialize text codec settings
-    $this->eZUpdateTextCodecSettings();
-    // Initialize debug settings.
-    $this->eZUpdateDebugSettings();
-    
-
-    
-    
-    eZExecution::addCleanupHandler( array('ezpController', 'eZDBCleanup') );
-    eZExecution::addFatalErrorHandler( array('ezpController', 'eZFatalError') );
-
-    eZDebugSetting::setDebugINI( eZINI::instance( 'debug.ini' ) );
-    eZDebug::setScriptStart( $this->scriptStartTime );
-    eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
-    eZDebug::checkDebugByUser();
-    // Enable this line to get eZINI debug output
-    // eZINI::setIsDebugEnabled( true );
-    // Enable this line to turn off ini caching
-    // eZINI::setIsCacheEnabled( false);
-
-    // Initialize module loading
-    eZModule::setGlobalPathList( $this->moduleRepositories );
-
-    
-    
-    
   }
 
   private function initializeCodePagePermissions()
@@ -171,6 +86,7 @@ class ezpController
   */
   public static function eZDisplayResult( $templateResult )
   {
+      $output = null;
       if ( $templateResult !== null )
       {
           $classname = eZINI::instance()->variable( "OutputSettings", "OutputFilterName" );
@@ -184,21 +100,19 @@ class ezpController
           {
               $debugMarkerLength = strlen( $debugMarker );
               $output = substr( $templateResult, 0, $pos );
-              
               $output .= substr( $templateResult, $pos + $debugMarkerLength );
           }
           else
           {
               $output = $templateResult;
           }
-
-          return $output;
       }
-
-      return;
+      return $output;
   }
 
-    /*!
+  
+
+  /*!
    Appends a new warning item to the warning list.
    \a $parameters must contain a \c error and \c text key.
   */
@@ -253,7 +167,7 @@ class ezpController
   */
   public function eZUpdateDebugSettings()
   {
-      /*$ini = eZINI::instance();
+      $ini = eZINI::instance();
 
       $settings = array();
       list( $settings['debug-enabled'], $settings['debug-by-ip'], $settings['log-only'], $settings['debug-by-user'], $settings['debug-ip-list'], $logList, $settings['debug-user-list'] ) =
@@ -270,7 +184,7 @@ class ezpController
       {
           $settings['always-log'][$level] = in_array( $name, $logList );
       }
-      eZDebug::updateSettings( $settings );*/
+      eZDebug::updateSettings( $settings );
   }
 
   private static function checkPHPVersion()
@@ -287,14 +201,14 @@ class ezpController
 
   private function setTimezone()
   {
-    // Set a default time zone if none is given to avoid "It is not safe to rely
-    // on the system's timezone settings" warnings. The time zone can be overriden
-    // in config.php or php.ini.
     if ( !ini_get( "date.timezone" ) )
     {
         date_default_timezone_set( "UTC" );
     }
+  }
 
+  private function setCorrectTimezone()
+  {
     // Set correct site timezone
     $timezone = $this->ini->variable( "TimeZoneSettings", "TimeZone");
     if ( $timezone )
@@ -345,8 +259,6 @@ class ezpController
                       eZSys::indexFile() );
 
     $access = changeAccess( $access );
-
-    eZExtension::activateExtensions( 'access' );
     
     eZDebugSetting::writeDebug( 'kernel-siteaccess', $access, 'current siteaccess' );
     return $access;
@@ -407,6 +319,7 @@ class ezpController
 
   private function initializeLocale()
   {
+    $this->languageCode = eZLocale::instance()->httpLocaleCode();
     $phpLocale = trim( $this->ini->variable( 'RegionalSettings', 'SystemLocale' ) );
     if ( $phpLocale != '' )
     {
@@ -1049,28 +962,97 @@ class ezpController
         $this->templateResult = $tpl->fetch( $resource . $this->show_page_layout );
     }
   }
-  
-  public function dispatch()
-  {    
-    eZDebug::addTimingPoint( "Script start" );
 
+  protected function header($string)
+  {
+    //header( $string );
+  }
+
+  public function dispatch()
+  {
+
+    self::checkPHPVersion();
+    $this->setTimezone();
+    self::ignoreUserAbort();
+
+    $this->scriptStartTime = microtime( true );
+    $this->use_external_css = true;
+    $this->show_page_layout = true;
+    $this->moduleRunRequired = true;
+    $this->policyCheckRequired = true;
+    $this->urlTranslatorAllowed = true;
+    $this->validityCheckRequired = false;
+    $this->userObjectRequired = true;
+    $this->sessionRequired = true;
+    $this->dbRequired = true;
+    $this->noCacheAdviced = true;
+    $this->siteDesignOverride = false;
+    $this->policyCheckOmitList = array();
+    $this->moduleRepositories = array();
+    $this->initializeSiteBasics();
+    $this->addGlobal( 'eZSiteBasics', $this->siteBasics, true );
+    $this->addGlobal( 'eZRedirection', false );
+    self::setErrorReporting();
+    eZDebugSetting::setDebugINI( eZINI::instance( 'debug.ini' ) );
+    $this->eZUpdateTextCodecSettings();
+    $this->eZUpdateDebugSettings();
+    $this->ini = eZINI::instance();
+    $this->setCorrectTimezone();
+    $this->initializeCodePagePermissions();
+    eZExecution::addCleanupHandler( array('ezpController', 'eZDBCleanup') );
+    eZExecution::addFatalErrorHandler( array('ezpController', 'eZFatalError') );
+    eZDebug::setScriptStart( $this->scriptStartTime );
+    $this->httpCharset = eZTextCodec::httpCharset();
+    $this->ini = eZINI::instance();
+    eZLocale::setIsDebugEnabled( (bool) $this->ini->variable( 'RegionalSettings', 'Debug' ) == 'enabled' );
+    eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
+    $this->addGlobal( 'eZGlobalRequestURI', eZSys::serverVariable( 'REQUEST_URI' ) );
+    eZSys::init( 'index.php', $this->ini->variable( 'SiteAccessSettings', 'ForceVirtualHost' ) == 'true' );
+
+    eZDebug::addTimingPoint( "Script start" );
+    $this->uri = eZURI::instance( eZSys::requestURI() );
+    $this->addGlobal( 'eZRequestedURI', $this->uri );
     self::preCheck();
     self::checkForExtension();
-    
-    $this->access = self::access($this->uri);
-
+    $this->access = self::access( $this->uri );
+    eZDebug::checkDebugByUser();
+    eZExtension::activateExtensions( 'access' );
+    $this->tplINI = eZINI::instance( 'template.ini' );
+    $this->tplINI->loadCache();
+    self::initializeCallBackForSession($this->ini);
+    $this->moduleRepositories = eZModule::activeModuleRepositories();
+    eZModule::setGlobalPathList( $this->moduleRepositories );
+    $check = eZHandlePreChecks( $this->siteBasics, $this->uri );
+    $this->db = false;
+    $this->initializeDatabaseAndStartSession();
     $this->initializeLocale();
     
-    $this->tplINI->loadCache();
+    $this->headerList = array( 'Expires'          => 'Mon, 26 Jul 1997 05:00:00 GMT',
+                               'Last-Modified'    => gmdate( 'D, d M Y H:i:s' ) . ' GMT',
+                               'Cache-Control'    => 'no-cache, must-revalidate',
+                               'Pragma'           => 'no-cache',
+                               'X-Powered-By'     => 'eZ Publish',
+                               'Content-Type'     => 'text/html; charset=' . $this->httpCharset,
+                               'Served-by'        => $_SERVER["SERVER_NAME"],
+                               'Content-language' => $this->languageCode );
 
-    $check = eZHandlePreChecks( $this->siteBasics, $this->uri );
-
-    $this->initializeDatabaseAndStartSession();
+    
+    $this->site = array( 'title'      => $this->ini->variable( 'SiteSettings', 'SiteName' ),
+                         'design'     => $this->ini->variable( 'DesignSettings', 'SiteDesign' ),
+                         'http_equiv' => array( 'Content-Type'    => 'text/html; charset=' . $this->httpCharset,
+                                                'Content-language' => $this->languageCode ) );
+    
 
     $this->headerList = array_merge( $this->headerList, eZHTTPHeader::headerOverrideArray( $this->uri ) );
 
+    foreach( $this->headerList as $key => $value )
+    {
+      $this->header( $key . ': ' . $value );
+    }
+
     eZSection::initGlobalID();
-    
+
+    $this->policyCheckViewMap = array();
     $this->readRoleSettings();
     
     $this->module = $this->moduleLoop($check);
@@ -1106,4 +1088,3 @@ class ezpController
     return self::eZDisplayResult( $this->templateResult );
   }
 }
-
