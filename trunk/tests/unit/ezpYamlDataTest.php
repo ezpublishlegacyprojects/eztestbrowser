@@ -283,7 +283,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $node = $object->mainNode();
     $url_alias = eZURLAliasML::fetchByAction('eznode', $node->attribute('node_id'));
     $this->assertEquals(count($url_alias), 3);
-    $this->assertEquals($url_alias[0]->attribute('text'), 'An-article');
+    $this->assertEquals($url_alias[0]->attribute('text'), 'an_article');
     $this->assertEquals($url_alias[1]->attribute('text'), 'alias-1');
     $this->assertEquals($url_alias[1]->attribute('lang_mask'), 2);
     $this->assertEquals($url_alias[2]->attribute('text'), 'alias-2');

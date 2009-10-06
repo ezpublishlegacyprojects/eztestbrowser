@@ -64,9 +64,14 @@ class idAttribute
         $this->object->addLanguage($language_code);
         $attribute = $this->attribute->language($language_code);
       }
-      
+      /**
+       * @TODO: questo codice è duplicato
+       */
       switch( $attribute->attribute( 'data_type_string' ) )
       {
+        case 'ezimage':
+           $attribute->fromString($value);
+           break;
         case 'ezxmltext':
             $value = $this->processXmlTextData( $value, $attribute );
         default:
