@@ -1,44 +1,17 @@
 <?php
+
 /**
-* Copyright (C) 2009  Francesco trucchia
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*
-* @author Francesco (cphp) Trucchia <ft@ideato.it>
-*
-*/
-
-class ezpYamlData
+ * Description of ezpLoaderclass
+ *
+ * @author Francesco (cphp) Trucchia
+ */
+class ezpLoader
 {
   protected $object_ids = array();
-
   protected $content_object_ids = array();
-
   protected $object_parameters;
 
-  private function parseYaml($file)
-  {
-    if (!file_exists($file))
-    {
-      throw new Exception('File '. $file .' does not exist');
-    }
-    
-    return sfYaml::load($file);
-  }
-
-  private function setContentObjectMap($object)
+  protected function setContentObjectMap($object)
   {
     $remote_id = $object->object->attribute('remote_id');
     if (!$object->object->mainNodeID())
@@ -50,7 +23,7 @@ class ezpYamlData
     $this->content_object_ids[$remote_id] = $object->id;
   }
 
-  private function setClassAttribute($attribute, $attribute_name, $value)
+  protected function setClassAttribute($attribute, $attribute_name, $value)
   {
     if(isset($value))
     {
@@ -58,12 +31,12 @@ class ezpYamlData
     }
   }
 
-  private function getIdentifierFromName($name)
+  protected function getIdentifierFromName($name)
   {
     return strtolower($name);
   }
 
-  private function loadTranslations($object)
+  protected function loadTranslations($object)
   {
     if (!$this->object_parameters->has('translations'))
     {
@@ -88,7 +61,7 @@ class ezpYamlData
    * @param array $object_parameters
    * @param ezpObject $object
    */
-  private function loadLocations($object)
+  protected function loadLocations($object)
   {
     if (!$this->object_parameters->has('locations'))
     {
@@ -119,7 +92,7 @@ class ezpYamlData
    * @param array $parameters
    * @param idObject $object
    */
-  private function loadRelated($object)
+  protected function loadRelated($object)
   {
     if (!$this->object_parameters->has('related'))
     {
@@ -149,7 +122,7 @@ class ezpYamlData
    *
    * @param idObject $object
    */
-  private function loadUrlAlias($object)
+  protected function loadUrlAlias($object)
   {
     if (!$this->object_parameters->has('url_alias'))
     {
@@ -170,7 +143,7 @@ class ezpYamlData
 
   }
 
-  private function output($message)
+  protected function output($message)
   {
     if ($this->verbose)
     {
@@ -178,7 +151,7 @@ class ezpYamlData
     }
   }
 
-  
+
 
   protected function getParentNodeId($parent_node_id)
   {
@@ -199,24 +172,15 @@ class ezpYamlData
     return $parent_node_id;
   }
 
-  protected function createOrRetrieve($class_identifier = null)
-  {
-    if ($this->object_parameters->has('id'))
-    {
-      return idObjectRepository::retrieveById($this->object_parameters->get('id'));
-    }
-
-    return new idObject($class_identifier);
-  }
-
   /*
    * Build eZ Publish object
    *
    * @param array $object_parameters
    * @return idObject
    */
-  protected function buildObject($object_parameters)
+  public function buildObject($object_parameters)
   {
+    
     $this->object_parameters->clear();
     $this->object_parameters->add($object_parameters);
 
@@ -228,7 +192,8 @@ class ezpYamlData
       $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
     }
 
-    $object = $this->createOrRetrieve($this->object_parameters->get('class_identifier'));
+    $repository = new idObjectRepository($this->object_parameters);
+    $object = $repository->createOrRetrieve();
     $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
 
     $object->hydrate($this->object_parameters->getAll());
@@ -245,8 +210,8 @@ class ezpYamlData
     return $object;
   }
 
-  protected function buildObjects($data)
-  {
+  public function buildObjects($data)
+  { 
     foreach ($data as $object_class => $objects)
     {
       $object_class = trim($object_class, '_');
@@ -260,45 +225,8 @@ class ezpYamlData
     }
   }
 
-
-
-  public function __construct($verbose = false)
+  public function buildClasses($file)
   {
-    $this->verbose = $verbose;
-    $this->object_parameters = new sfParameterHolder();
-  }
-
-  public function remoteIdToId($object, &$attributes)
-  {
-    array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
-  }
-
-  /*
-   * Parse yaml file and build eZ Objects
-   *
-   * @param string $file
-   */
-  public function loadObjectsDataFromYaml($file)
-  {
-    $data = $this->parseYaml($file);
-    $this->buildObjects($data);
-  }
-
-  /*
-   * Parse yaml file and build ez objects
-   *
-   * @param string $file
-   * @deprecated
-   * @see loadObjectsDataFromYaml()
-   */
-  public function loadObjectsData($file)
-  {
-    $this->loadObjectsDataFromYaml($file);
-  }
-
-  public function loadClassesData($file)
-  {
-
     $data = $this->parseYaml($file);
 
     foreach ($data as $name => $class_data)
@@ -331,13 +259,13 @@ class ezpYamlData
       foreach ($class_data['translations'] as $language_code => $language_data)
       {
         eZContentLanguage::fetchByLocale($language_code, true);
-        
+
         $class->class->setName($language_data['name'], $language_code);
         //ezContentClassAttribute::removeObject($def);
-        
+
         foreach ($language_data['attributes'] as $identifier => $name)
         {
-          $this->output('setting attribute name: '.$identifier);
+          $this->output("\tsetting attribute name: ".$identifier);
           $attributes[$identifier]->setName($name, $language_code);
           $attributes[$identifier]->store();
         }
@@ -348,6 +276,17 @@ class ezpYamlData
       $this->classGroup = eZContentClassClassGroup::create( $class->id, $class->version, 1, 'Content');
       $this->classGroup->store();
     }
+  }
+
+  public function __construct($verbose = false)
+  {
+    $this->verbose = $verbose;
+    $this->object_parameters = new sfParameterHolder();
+  }
+
+  public function remoteIdToId($object, &$attributes)
+  {
+    array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
   }
 }
 
@@ -365,3 +304,5 @@ function remoteIdToId(&$value, $name, $parameters)
     }
   }
 }
+
+?>

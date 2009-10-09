@@ -23,28 +23,44 @@
 abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 {
   protected $sqlFiles = array();
-
   protected $backupGlobals = false;
+  protected $kernel_schema = 'kernel/sql/mysql/kernel_schema.sql';
+  protected $cleandata = 'kernel/sql/mysql/cleandata.sql';
+  protected $fixtures_classes = null;
+  protected $fixtures_objects = null;
+  protected $verbose = false;
+  protected $load_database = true;
 
   protected static $load_once = false;
-  
   protected static $fixtures_hash;
   
-  protected $kernel_schema = 'kernel/sql/mysql/kernel_schema.sql';
-  
-  protected $cleandata = 'kernel/sql/mysql/cleandata.sql';
-  
-  protected $fixtures_classes = null;
-  
-  protected $fixtures_objects = null;
-
-  protected $verbose = false;
-  
   abstract protected function fixturesSetUp();
-  
+
+  protected function initializeDatabase()
+  {
+    $dsn = ezpTestRunner::dsn();
+    $this->sharedFixture = ezpTestDatabaseHelper::create($dsn);
+
+    $this->sqlFiles = array(realpath($this->kernel_schema), realpath($this->cleandata));
+
+    if (!ezpTestDatabaseHelper::insertSqlData( $this->sharedFixture, $this->sqlFiles ))
+      {
+        throw new Exception('Impossible to load some sql files');
+      };
+
+      eZDB::setInstance( $this->sharedFixture );
+  }
+
   protected function initialize()
   {
-    $this->sqlFiles = array(realpath($this->kernel_schema), realpath($this->cleandata));
+    $GLOBALS['eZTextCodecInternalCharsetReal'] = 'utf-8';
+    $this->charset = $GLOBALS['eZTextCodecInternalCharsetReal'];
+
+    self::$fixtures_hash = $this->getFixturesHash();
+    self::$load_once = true;
+
+    $this->initializeDatabase();
+    
   }
   
   private function getFixturesHash()
@@ -59,48 +75,20 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   {
     $this->fixturesSetUp();
 
-    if(!self::$load_once || self::$fixtures_hash != $this->getFixturesHash())
+    if($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()))
     { 
-      self::$fixtures_hash = $this->getFixturesHash();
-      self::$load_once = true;
-      
       $this->initialize();
-
-      $dsn = ezpTestRunner::dsn();
-      $this->sharedFixture = ezpTestDatabaseHelper::create($dsn);
-      
-      if (!ezpTestDatabaseHelper::insertSqlData( $this->sharedFixture, $this->sqlFiles ))
-      {
-        throw new Exception('Impossible to load some sql files');
-      };
-      
-      eZDB::setInstance( $this->sharedFixture );
-
-      if (!$this->fixtures_classes || !$this->fixtures_objects)
-      {
-        throw new Exception('The fixtures files is not configured');
-      }
-
-      $classes_fixtures = realpath($this->fixtures_classes);
-      $objects_fixtures = realpath($this->fixtures_objects);
-
-      if (!file_exists($classes_fixtures))
-      {
-        throw new Exception("The classes fixtures file $classes_fixtures does not exists");
-      }
-
-      if (!file_exists($objects_fixtures))
-      {
-        throw new Exception("The objects fixtures file $objects_fixtures does not exists");
-      }
-
+  
       $data = new ezpYamlData($this->verbose);
-      $data->loadClassesData($classes_fixtures);
-      $data->loadObjectsData($objects_fixtures);
-
-      $this->charset = $GLOBALS['eZTextCodecInternalCharsetReal'];
-      $GLOBALS['eZTextCodecInternalCharsetReal'] = 'utf-8';
+      $data->loadClassesData(realpath($this->fixtures_classes));
+      $data->loadObjectsData(realpath($this->fixtures_objects));
     }
+
+    if (!$this->sharedFixture)
+    {
+      $this->sharedFixture = ezpDatabaseHelper::useDatabase(ezpTestRunner::dsn());
+    }
+    
     eZDB::setInstance($this->sharedFixture);
   }
 
@@ -120,6 +108,16 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   {
     unset($GLOBALS['eZContentLanguageList']);
     unset($GLOBALS['eZContentLanguageMask']);
+  }
 
+  /**
+   * Fetch an ez object by remote id
+   * 
+   * @param string $remote_id
+   * @return eZContentObject
+   */
+  public function fetchObjectByRemoteId($remote_id)
+  {
+    return eZContentObject::fetchByRemoteId($remote_id);
   }
 }

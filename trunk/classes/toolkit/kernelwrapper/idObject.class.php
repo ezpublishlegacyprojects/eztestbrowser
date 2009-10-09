@@ -27,6 +27,12 @@ class idObject extends ezpObject
     if ($classIdentifier)
     {
       $this->class = eZContentClass::fetchByIdentifier($classIdentifier);
+
+      if (!$this->class)
+      {
+        throw new ezpInvalidClassException($classIdentifier.' does not exists.');
+      }
+
       $this->object = $this->class->instantiate($creatorID, $section);
 
       $this->setMainNode($parentNodeID);

@@ -22,6 +22,13 @@
 
 class idObjectRepository
 {
+  protected $parameters;
+
+  public function __construct($parameters)
+  {
+    $this->parameters = $parameters;
+  }
+  
   public static function retrieveById($id)
   {
     $object = new idObject();
@@ -34,5 +41,20 @@ class idObjectRepository
     $object = new idObject();
     $object->fromeZContentObject(eZContentObject::fetchByNodeID($node_id));
     return $object;
+  }
+
+  public function createOrRetrieve()
+  {
+    if ($this->parameters->has('id'))
+    {
+      return self::retrieveById($this->parameters->get('id'));
+    }
+
+    if ($this->parameters->has('class_identifier'))
+    {
+      return new idObject($this->parameters->get('class_identifier'));
+    }
+
+    throw new ezpInvalidObjectException('Impossible to create or retrieve an object. You need to pass an id or a class_identifier.');
   }
 }

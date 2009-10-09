@@ -6,7 +6,6 @@ class ezpControllerTest extends ezpDatabaseTestCase
 
   protected function emptyEnvironment()
   {
-    echo 'svuoto';
     unset($_SERVER['REQUEST_URI'],
           $_SERVER['HTTP_HOST'],
           $_SERVER['SERVER_NAME'],
@@ -32,7 +31,8 @@ class ezpControllerTest extends ezpDatabaseTestCase
   }
 
   public function testBackendController()
-  { 
+  {
+    $this->markTestSkipped();
     $_SERVER['REQUEST_URI']     = '/user/login';
     $_SERVER['HTTP_HOST']       = 'panel-dev.casavinicolazonin.it';
 
