@@ -7,12 +7,12 @@
  * @package tests
  */
 
-class ideatoTestSuite extends ezpDatabaseTestSuite
+class eZTestBrowserTestSuite extends ezpDatabaseTestSuite
 {
   public function __construct()
   {
     parent::__construct();
-    $this->setName('Ideato Test Suite');
+    $this->setName('eZ Test Browser Test Suite');
     
     $this->addTestSuite('ezpYamlDataTest');
     $this->addTestSuite('ezpLoaderExceptionTest');
