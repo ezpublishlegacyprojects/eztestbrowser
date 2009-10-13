@@ -91,7 +91,21 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
   {
     return call_user_func_array(array($this->browser, $method), $parameters);
   }
-  
+
+  /**
+   * Proxy deprecated method to checkResponseElement
+   *
+   * @param <type> $selector
+   * @param <type> $value
+   * @param <type> $options
+   * @deprecated
+   * 
+   */
+  protected function checkElementResponse($selector, $value = true, $options = array())
+  {
+    $this->checkResponseElement($selector, $value, $options);
+  }
+
   /**
    * Tests that the response matches a given CSS selector.
    *
@@ -100,7 +114,7 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
    * @param  array  $options   Options for the current test
    *
    */
-  protected function checkElementResponse($selector, $value = true, $options = array())
+  protected function checkResponseElement($selector, $value = true, $options = array())
   {
     if (is_null($this->getResponseDom()))
     {
