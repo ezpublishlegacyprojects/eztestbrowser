@@ -36,19 +36,14 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   
   abstract protected function fixturesSetUp();
 
-  protected function initializeDatabase()
+  protected function insertSql()
   {
-    $dsn = ezpTestRunner::dsn();
-    $this->sharedFixture = ezpTestDatabaseHelper::create($dsn);
-
-    $this->sqlFiles = array(realpath($this->kernel_schema), realpath($this->cleandata));
-
     if (!ezpTestDatabaseHelper::insertSqlData( $this->sharedFixture, $this->sqlFiles ))
-      {
-        throw new Exception('Impossible to load some sql files');
-      };
+    {
+      throw new Exception('Impossible to load some sql files');
+    }
 
-      eZDB::setInstance( $this->sharedFixture );
+    eZDB::setInstance( $this->sharedFixture );
   }
 
   protected function initialize()
@@ -59,8 +54,10 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     self::$fixtures_hash = $this->getFixturesHash();
     self::$load_once = true;
 
-    $this->initializeDatabase();
+    $this->sharedFixture = ezpTestDatabaseHelper::create(ezpTestRunner::dsn());
     
+    $this->sqlFiles[] = realpath($this->kernel_schema);
+    $this->sqlFiles[] = realpath($this->cleandata);
   }
   
   private function getFixturesHash()
@@ -78,6 +75,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     if($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()))
     { 
       $this->initialize();
+      $this->insertSql();
   
       $data = new ezpYamlData($this->verbose);
       $data->loadClassesData(realpath($this->fixtures_classes));
