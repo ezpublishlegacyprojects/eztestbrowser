@@ -6,6 +6,7 @@ News:
       name:             Title
       type:             ezstring
       is_required:      true
+      is_information_collector: true
     teaser:
       name:             Teaser
       type:             ezxmltext

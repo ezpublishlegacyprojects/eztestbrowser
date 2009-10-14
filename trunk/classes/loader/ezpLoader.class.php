@@ -257,6 +257,11 @@ class ezpLoader
           $this->setClassAttribute($attribute, 'is_required', $attribute_data['is_required']);
         }
 
+        if (isset($attribute_data['is_information_collector']))
+        {
+          $this->setClassAttribute($attribute, 'is_information_collector', $attribute_data['is_information_collector']);
+        }
+
         $attribute->store();
       }
 

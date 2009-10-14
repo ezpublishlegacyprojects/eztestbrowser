@@ -53,6 +53,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals($attributes['title']->name('ita-IT'), 'Titolo');
     $this->assertEquals($attributes['title']->attribute('data_type_string'), 'ezstring');
     $this->assertTrue((bool)$attributes['title']->attribute('is_required'));
+    $this->assertTrue((bool)$attributes['title']->attribute('is_information_collector'));
 
     $this->assertEquals($attributes['teaser']->name(), 'Teaser');
     $this->assertEquals($attributes['teaser']->name('ita-IT'), 'Intro');
