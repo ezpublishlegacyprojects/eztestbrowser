@@ -40,3 +40,20 @@ Related:
     images:
       name:             Images
       type:             ezobjectrelationlist
+
+FrontPage:
+  object_name:    <name>
+  is_container:   true
+  attributes:
+    name:         { name: Name, type: ezstring}
+    banner:       { name: Banner, type: ezimage }
+    banner_link:  { name: Banner link, type: ezstring}
+    description:        { name: Description, type: ezxmltext }
+  translations:
+    ita-IT:
+      name:                 Pagina principale
+      attributes:
+        name:               Nome
+        banner:             Banner
+        banner_link:        Banner link
+        description:        Descrizione

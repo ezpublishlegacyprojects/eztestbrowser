@@ -207,6 +207,12 @@ class ezpLoader
     $this->loadUrlAlias($object);
     $this->setContentObjectMap($object);
 
+    if (!empty($object_parameters['swap_with']))
+    {
+      $node = $object->mainNode();
+      $this->swapNodes($node->attribute('node_id'), $object_parameters['swap_with']);
+    }
+
     return $object;
   }
 
@@ -288,6 +294,110 @@ class ezpLoader
   {
     array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
   }
+
+  public function swapNodes($source_node_id, $destination_node_id)
+  {
+    $nodeID = $source_node_id;
+    $node = eZContentObjectTreeNode::fetch( $nodeID );
+
+    if( !is_object( $node ) )
+    {
+      $this->output("Can't fetch node '$nodeID'");
+      return false;
+    }
+
+    $nodeParentNodeID = $node->attribute( 'parent_node_id' );
+
+    $object = $node->object();
+    if( !is_object( $object ) )
+    {
+      $this->output("Cannot fetch object for node '$nodeID'");
+      return false;
+    }
+
+    $objectID = $object->attribute( 'id' );
+    $objectVersion = $object->attribute( 'current_version' );
+    $class = $object->contentClass();
+    $classID = $class->attribute( 'id' );
+
+    $selectedNodeID = $destination_node_id;
+
+    $selectedNode = eZContentObjectTreeNode::fetch( $selectedNodeID );
+
+    if( !is_object( $selectedNode ) )
+    {
+      $this->output("Cannot fetch node '$selectedNodeID'");
+      return false;
+    }
+
+    eZContentCacheManager::clearContentCacheIfNeeded( $objectID );
+
+    $selectedObject = $selectedNode->object();
+    $selectedObjectID = $selectedObject->attribute( 'id' );
+    $selectedObjectVersion = $selectedObject->attribute( 'current_version' );
+    $selectedNodeParentNodeID = $selectedNode->attribute( 'parent_node_id' );
+
+    $nodeParent            = $node->attribute( 'parent' );
+    $selectedNodeParent    = $selectedNode->attribute( 'parent' );
+    $objectClassID         = $object->attribute( 'contentclass_id' );
+    $selectedObjectClassID = $selectedObject->attribute( 'contentclass_id' );
+
+    if( !$nodeParent || !$selectedNodeParent )
+    {
+      $this->output("No $nodeParent or no !$selectedNodeParent received.");
+      return false;
+    }
+
+    $node->setAttribute( 'contentobject_id', $selectedObjectID );
+    $node->setAttribute( 'contentobject_version', $selectedObjectVersion );
+
+    $db = eZDB::instance();
+    $db->begin();
+    $node->store();
+    $selectedNode->setAttribute( 'contentobject_id', $objectID );
+    $selectedNode->setAttribute( 'contentobject_version', $objectVersion );
+    $selectedNode->store();
+
+    // modify path string
+    $changedOriginalNode = eZContentObjectTreeNode::fetch( $nodeID );
+    $changedOriginalNode->updateSubTreePath();
+    $changedTargetNode = eZContentObjectTreeNode::fetch( $selectedNodeID );
+    $changedTargetNode->updateSubTreePath();
+
+    // modify section
+    if( $changedOriginalNode->attribute( 'main_node_id' ) == $changedOriginalNode->attribute( 'node_id' ) )
+    {
+        $changedOriginalObject = $changedOriginalNode->object();
+        $parentObject = $nodeParent->object();
+        if( $changedOriginalObject->attribute( 'section_id' ) != $parentObject->attribute( 'section_id' ) )
+        {
+
+            eZContentObjectTreeNode::assignSectionToSubTree( $changedOriginalNode->attribute( 'main_node_id' ),
+                                                             $parentObject->attribute( 'section_id' ),
+                                                             $changedOriginalObject->attribute( 'section_id' ) );
+        }
+    }
+    if( $changedTargetNode->attribute( 'main_node_id' ) == $changedTargetNode->attribute( 'node_id' ) )
+    {
+        $changedTargetObject = $changedTargetNode->object();
+        $selectedParentObject = $selectedNodeParent->object();
+        if( $changedTargetObject->attribute( 'section_id' ) != $selectedParentObject->attribute( 'section_id' ) )
+        {
+
+            eZContentObjectTreeNode::assignSectionToSubTree( $changedTargetNode->attribute( 'main_node_id' ),
+                                                             $selectedParentObject->attribute( 'section_id' ),
+                                                             $changedTargetObject->attribute( 'section_id' ) );
+        }
+    }
+
+    $db->commit();
+
+    // clear cache for new placement.
+    eZContentCacheManager::clearContentCacheIfNeeded( $objectID );
+
+    return true;
+  }
+
 }
 
 function remoteIdToId(&$value, $name, $parameters)
