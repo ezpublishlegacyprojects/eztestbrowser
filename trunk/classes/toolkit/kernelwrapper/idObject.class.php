@@ -113,7 +113,7 @@ class idObject extends ezpObject
           switch($attribute->attribute('data_type_string'))
           {
             case 'ezdate':
-              if (preg_match('/\d{4}-\d{2}-\d{2}/', $value))
+              if (preg_match('/\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/', $value))
               {
                 $value = strtotime($value);
               }

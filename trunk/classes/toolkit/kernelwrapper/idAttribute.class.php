@@ -41,7 +41,7 @@ class idAttribute
       return $this->attribute->$name;
     }
     
-    throw new Exception($name . 'is invalid');
+    throw new Exception($name . ' is invalid');
   }
 
   public function __set($name, $value)
@@ -70,12 +70,19 @@ class idAttribute
       switch( $attribute->attribute( 'data_type_string' ) )
       {
         case 'ezimage':
-           $attribute->fromString($value);
-           break;
+          $attribute->fromString($value);
+          break;
+        case 'ezdate':
+          if (preg_match('/\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/', $value))
+          {
+            $value = strtotime($value);
+          }
+          $attribute->fromString($value);
+          break;
         case 'ezxmltext':
-            $value = $this->processXmlTextData( $value, $attribute );
+          $value = $this->processXmlTextData( $value, $attribute );
         default:
-            $attribute->setAttribute('data_text', $value);
+          $attribute->setAttribute('data_text', $value);
       }
 
       return $attribute->store();
