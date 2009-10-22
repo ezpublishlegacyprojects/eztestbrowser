@@ -115,7 +115,7 @@ class idAttribute
 
       $xml = $parser->process($xml);
 
-      $class_attribute = eZContentClassAttribute::fetch($attribute->attribute(contentclassattribute_id));
+      $class_attribute = eZContentClassAttribute::fetch($attribute->attribute('contentclassattribute_id'));
       $object->setParserError($parser->getErrors(), $class_attribute->attribute('identifier'));
 
       if (!$xml)
