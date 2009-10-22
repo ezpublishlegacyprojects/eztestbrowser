@@ -22,6 +22,9 @@
 
 class idObject extends ezpObject
 {
+  protected $repository = null;
+  protected $parser_errors = array();
+  
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
   {
     if ($classIdentifier)
@@ -39,6 +42,16 @@ class idObject extends ezpObject
 
       $this->nodes = (isset($this->mainNode)) ? array($this->mainNode) : array();
     }
+  }
+
+  public function setImportImageRepository($repository)
+  {
+    $this->repository = $repository;
+  }
+
+  public function getImportImageRepository()
+  {
+    return $this->repository;
   }
 
   private function setMainNode($parent_node_id)
@@ -86,6 +99,11 @@ class idObject extends ezpObject
 
   public function fromeZContentObject($object)
   {
+    if (!$object)
+    {
+      throw new Exception('Object is invalid');
+    }
+    
     $this->object = $object;
     $this->data_map = $this->object->dataMap();
     $this->class = $object->contentClass();
@@ -112,6 +130,13 @@ class idObject extends ezpObject
           $attribute = $this->dataMap[$name];
           switch($attribute->attribute('data_type_string'))
           {
+            case 'ezxmltext':
+              if (mb_detect_encoding($value) != 'UTF-8')
+              {
+                $value = utf8_encode($value);
+              }
+              $attribute->fromString(idAttribute::processXmlTextData($value, $attribute, $this, $this->repository));
+              break;
             case 'ezdate':
               if (preg_match('/\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/', $value))
               {
@@ -123,11 +148,6 @@ class idObject extends ezpObject
             case 'ezboolean':
               $attribute->fromString($value);
               break;
-            case 'ezxmltext':
-              if (mb_detect_encoding($value) != 'UTF-8')
-              {
-                $value = utf8_encode($value);
-              }
             default:
               parent::__set($name, $value);
               break;
@@ -183,7 +203,7 @@ class idObject extends ezpObject
         {
             if ( $versionDataMap[$attr]->attribute( 'data_type_string') == "ezxmltext" )
             {
-                $value = $this->processXmlTextData( $value, $versionDataMap[$attr] );
+                $value = $this->processXmlTextData( $value, $versionDataMap[$attr], $this->repository );
             }
 
             $versionDataMap[$attr]->fromString($value);
@@ -215,20 +235,9 @@ class idObject extends ezpObject
       return $ret;
     }
 
-    private function processXmlTextData($xml, $attribute)
+    private function processXmlTextData($value, $attribute, $repository = null)
     {
-      $parser = new eZSimplifiedXMLInputParser($this->object->attribute( 'id' ));
-      $parser->ParseLineBreaks = true;
-
-      $xml = $parser->process($xml);
-      $xml = eZXMLTextType::domString($xml);
-
-      $urlIdArray = $parser->getUrlIDArray();
-      if (count($urlIdArray) > 0)
-      {
-        eZSimplifiedXMLInput::updateUrlObjectLinks($attribute, $urlIdArray);
-      }
-      return $xml;
+      return idAttribute::processXmlTextData($value, $attribute, $this, $repository);
     }
 
     /**
@@ -269,5 +278,15 @@ class idObject extends ezpObject
     {
       $this->addTranslation($language_code);
       $this->publish();
+    }
+
+    public function setParserError($parser_errors, $name)
+    {
+      $this->parser_errors[$name] = $parser_errors;
+    }
+
+    public function getParserError()
+    {
+      return $this->parser_errors;
     }
 }

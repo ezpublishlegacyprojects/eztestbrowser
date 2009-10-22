@@ -80,7 +80,7 @@ class idAttribute
           $attribute->fromString($value);
           break;
         case 'ezxmltext':
-          $value = $this->processXmlTextData( $value, $attribute );
+          $value = $this->processXmlTextData( $value, $attribute, $this->object, $this->object->getImportImageRepository());
         default:
           $attribute->setAttribute('data_text', $value);
       }
@@ -102,18 +102,33 @@ class idAttribute
     return call_user_func_array(array($this->attribute, $name), $arguments);
   }
 
-  private function processXmlTextData($xml, $attribute)
+  public static function processXmlTextData($xml, $attribute, $object, $repository = null)
   {
-      $parser = new eZSimplifiedXMLInputParser($this->object->attribute( 'id' ));
+      $parser = new idXmlInputParser($attribute->attribute('id'));
+
+      if ($repository)
+      {
+        $parser->setRepository($repository);
+      }
+      
       $parser->ParseLineBreaks = true;
 
       $xml = $parser->process($xml);
+
+      $class_attribute = eZContentClassAttribute::fetch($attribute->attribute(contentclassattribute_id));
+      $object->setParserError($parser->getErrors(), $class_attribute->attribute('identifier'));
+
+      if (!$xml)
+      {
+        throw new Exception('Invalid xml');
+      }
+      
       $xml = eZXMLTextType::domString($xml);
 
       $urlIdArray = $parser->getUrlIDArray();
       if (count($urlIdArray) > 0)
       {
-        eZSimplifiedXMLInput::updateUrlObjectLinks($attribute, $urlIdArray);
+        eZOEXMLInput::updateUrlObjectLinks($attribute, $urlIdArray);
       }
       return $xml;
   }

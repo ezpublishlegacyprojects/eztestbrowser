@@ -7,7 +7,7 @@
  * @package tests
  */
 
-class eZTestBrowserTestSuite extends ezpDatabaseTestSuite
+class eZTestBrowserTestSuite extends ezpTestSuite
 {
   public function __construct()
   {
@@ -21,6 +21,7 @@ class eZTestBrowserTestSuite extends ezpDatabaseTestSuite
     $this->addTestSuite('idObjectRepositoryTest');
     $this->addTestSuite('idClassRepositoryTest');
     $this->addTestSuite('idObjectTest');
+    $this->addTestSuite('idImportTest');
   }
   
   public static function suite()
