@@ -69,6 +69,7 @@ class idAttribute
        */
       switch( $attribute->attribute( 'data_type_string' ) )
       {
+        case 'ezurl':
         case 'ezimage':
           $attribute->fromString($value);
           break;
