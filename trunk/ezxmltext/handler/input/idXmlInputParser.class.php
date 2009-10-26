@@ -166,6 +166,8 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
 
       $string = str_replace('à', '&agrave;', $string);
       $string = str_replace('é', '&eacute;', $string);
+      //$string = str_replace('E’', '&Egrave;', $string);
+      
 
       $string = str_ireplace('<sup>', '<custom name="sup">', $string);
       $string = str_ireplace('</sup>', '</custom>', $string);
@@ -192,9 +194,11 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
       $string = preg_replace('|href="javascript:window.open\(.([^\']*?)\'[^>]*?>|m', 'href="\1">', $string);
       $string = preg_replace('|href=\s+"|m', 'href="', $string);
       $string = preg_replace('|<a[^>]*?></a>|m', '', $string);
-
+      $string = str_ireplace('’', "'", $string);
+      $string = str_replace('è', '&egrave;', $string);
       $string = html_entity_decode($string, ENT_QUOTES);
       $string = str_ireplace('&rsquo;', "'", $string);
+
       $string = preg_replace('|<([0-9]+)|', '&lt;\1', $string);
 
       if (!mb_check_encoding($string,'UTF-8'))
@@ -202,6 +206,7 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
         $string = utf8_encode($string);
       }
       $string = str_replace('&bull;', '•', $string);
+      
 
   //    echo "\n------------------------------------\n".$string;
       return $string;
