@@ -16,6 +16,7 @@ class eZTestBrowserTestSuite extends ezpTestSuite
     
     $this->addTestSuite('ezpYamlDataTest');
     $this->addTestSuite('ezpLoaderExceptionTest');
+    $this->addTestSuite('ezpLoaderTest');
     $this->addTestSuite('ezpControllerTest');
     
     $this->addTestSuite('idObjectRepositoryTest');

@@ -1,0 +1,16 @@
+Test:
+  object_name:          <title>  
+  attributes:
+    title:
+      name:             Title
+      type:             ezstring
+    options:
+      name:             Options
+      type:             ezselection
+      options:          { 1: opzione1, 2: opzione2, 3: opzione3 }
+  translations:
+    ita-IT:
+      name:             Notizia
+      title:
+        title:          Titolo
+        options:        Opzioni

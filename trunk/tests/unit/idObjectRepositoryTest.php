@@ -22,20 +22,27 @@ class idObjectRepositoryTest extends ezpDatabaseTestCase
     $folder = new idObject("folder", 2);
     $folder->name = __FUNCTION__;
     $folder->short_description = "123";
-    $folder->publish();
-
+    $folder->setAttribute('remote_id', 'folder');
+    $folder->store();
+    $folder->publish();    
 
     $object = idObjectRepository::retrieveById($folder->id);
 
     $this->assertTrue($object instanceof idObject);
     $this->assertTrue($object->id == $folder->id);
-    $this->assertEquals($object->name->__toString(), __FUNCTION__);
+    $this->assertEquals((string)$object->name, __FUNCTION__);
 
     $object = idObjectRepository::retrieveByNodeId($folder->main_node_id);
 
     $this->assertTrue($object instanceof idObject);
     $this->assertTrue($object->id == $folder->id);
-    $this->assertEquals($object->name->__toString(), __FUNCTION__);
+    $this->assertEquals((string)$object->name, __FUNCTION__);
+
+    $object = idObjectRepository::retrieveByRemoteId('folder');
+
+    $this->assertTrue($object instanceof idObject);
+    $this->assertTrue($object->id == $folder->id);
+    $this->assertEquals((string)$object->name, __FUNCTION__);
   }
 }
 

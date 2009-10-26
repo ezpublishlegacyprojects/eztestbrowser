@@ -262,6 +262,29 @@ class ezpLoader
           $this->setClassAttribute($attribute, 'is_information_collector', $attribute_data['is_information_collector']);
         }
 
+        if (isset($attribute_data['options']) && $attribute_data['type'] == 'ezselection')
+        {
+          // Serialize XML
+          $doc = new DOMDocument('1.0', 'utf-8');
+          $root = $doc->createElement("ezselection");
+          $doc->appendChild($root);
+
+          $options = $doc->createElement("options");
+
+          $root->appendChild($options);
+          foreach ($attribute_data['options'] as $index => $value)
+          {
+              $optionNode = $doc->createElement("option");
+              $optionNode->setAttribute('id', $index);
+              $optionNode->setAttribute('name', $value);
+
+              $options->appendChild($optionNode);
+          }
+
+          $xml = $doc->saveXML();
+          $this->setClassAttribute($attribute, 'data_text5', $xml);
+        }
+
         $attribute->store();
       }
 

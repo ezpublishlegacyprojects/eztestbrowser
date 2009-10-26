@@ -28,7 +28,13 @@ class idObjectRepository
   {
     $this->parameters = $parameters;
   }
-  
+
+  /**
+   * Proxy method to eZContentObject::fetch
+   *
+   * @param integer $id
+   * @return idObject
+   */
   public static function retrieveById($id)
   {
     $object = new idObject();
@@ -36,6 +42,12 @@ class idObjectRepository
     return $object;
   }
 
+  /**
+   * Proxy method to eZContentObject::fetchByNodeID
+   *
+   * @param integer $node_id
+   * @return idObject
+   */
   public static function retrieveByNodeId($node_id)
   {
     $object = new idObject();
@@ -43,6 +55,24 @@ class idObjectRepository
     return $object;
   }
 
+  /**
+   * Proxy method to eZContentObject::fetchByRemoteI
+   *
+   * @param string $remote_id
+   * @return idObject
+   */
+  public static function retrieveByRemoteId($remote_id)
+  {
+    $object = new idObject();
+    $object->fromeZContentObject(eZContentObject::fetchByRemoteID($remote_id));
+    return $object;
+  }
+
+  /**
+   * Based on parameterd value, create or retrieve an idObject
+   * 
+   * @return idObject
+   */
   public function createOrRetrieve()
   {
     if ($this->parameters->has('id'))

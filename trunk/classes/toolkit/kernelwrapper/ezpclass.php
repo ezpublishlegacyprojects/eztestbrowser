@@ -68,9 +68,16 @@ class ezpClass
     public function add( $name = 'Test attribute', $identifer = 'test_attribute', $type = 'ezstring' )
     {
         $classAttribute = eZContentClassAttribute::create( $this->id, $type, array(), $this->language );
+        
         $classAttribute->setName( $name, $this->language );
 
         $dataType = $classAttribute->dataType();
+
+        if (!$dataType)
+        {
+          throw new Exception('Impossible to create a '.$type.' attribute.');
+        }
+
         $dataType->initializeClassAttribute( $classAttribute );
 
         $classAttribute->setAttribute( 'identifier', $identifer );

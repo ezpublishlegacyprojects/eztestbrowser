@@ -97,7 +97,7 @@ class idObject extends ezpObject
     }
   }
 
-  public function fromeZContentObject($object)
+  public function fromeZContentObject(eZContentObject $object)
   {
     if (!$object)
     {
