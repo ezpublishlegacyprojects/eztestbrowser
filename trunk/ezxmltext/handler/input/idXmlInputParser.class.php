@@ -141,6 +141,7 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
 
     public function performPass1(&$data)
     {
+
       $data = self::cleanHtml($data);
       return parent::performPass1($data);
     }
@@ -162,6 +163,9 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
       $string = $this->stripTagAttribute($string, 'cellspacing');
       $string = $this->stripTagAttribute($string, 'cellpadding');
       $string = $this->stripTagAttribute($string, 'border');
+
+      $string = str_replace('à', '&agrave;', $string);
+      $string = str_replace('é', '&eacute;', $string);
 
       $string = str_ireplace('<sup>', '<custom name="sup">', $string);
       $string = str_ireplace('</sup>', '</custom>', $string);
@@ -197,6 +201,8 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
       {
         $string = utf8_encode($string);
       }
+      $string = str_replace('&bull;', '•', $string);
+
   //    echo "\n------------------------------------\n".$string;
       return $string;
     }
