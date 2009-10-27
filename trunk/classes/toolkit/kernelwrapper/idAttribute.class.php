@@ -71,6 +71,7 @@ class idAttribute
       {
         case 'ezurl':
         case 'ezimage':
+        case 'ezbinaryfile':
           $attribute->fromString($value);
           break;
         case 'ezdate':

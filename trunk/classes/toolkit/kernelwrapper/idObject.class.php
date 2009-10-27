@@ -146,6 +146,7 @@ class idObject extends ezpObject
             case 'ezobjectrelationlist':
             case 'ezinteger':
             case 'ezboolean':
+            case 'ezbinaryfile':
               $attribute->fromString($value);
               break;
             default:
