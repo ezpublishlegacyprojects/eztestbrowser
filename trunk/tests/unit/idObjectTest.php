@@ -35,6 +35,19 @@ class idObjectTest extends ezpDatabaseTestCase
     
     $this->assertContains('<section xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/"><paragraph xmlns:tmp="http://ez.no/namespaces/ezpublish3/temporary/"><line><embed view="embed" object_id="88"/> <strong>Efficiente</strong> </line><line> Non serve caricare immagini nel Database </line></paragraph></section>', $object->body->ita_IT->__toString());
   }
+
+  public function testFromArray()
+  {
+    $data = array('remote_id' => 'remote_id_from_array',
+                  'title' => 'Article title');
+    
+    $object = new idObject('article', 2);
+    $object->fromArray($data);
+    $object->publish();
+
+    $this->assertEquals('Article title', (string)$object->title);
+    $this->assertEquals('remote_id_from_array', $object->remote_id);
+  }
 }
 
 ?>

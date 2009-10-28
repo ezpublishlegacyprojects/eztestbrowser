@@ -156,7 +156,7 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
       $string = $this->stripTagAttribute($string, 'align');
       $string = $this->stripTagAttribute($string, 'valign');
       $string = $this->stripTagAttribute($string, 'onclick');
-      $string = $this->stripTagAttribute($string, 'class');
+      // $string = $this->stripTagAttribute($string, 'class');
       $string = $this->stripTagAttribute($string, 'width');
       $string = $this->stripTagAttribute($string, 'height');
       $string = $this->stripTagAttribute($string, 'style');

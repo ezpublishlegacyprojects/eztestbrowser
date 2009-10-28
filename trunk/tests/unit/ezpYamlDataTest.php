@@ -21,9 +21,9 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals('article', $object->class_identifier);
     $this->assertEquals('Test 2', $object->title->__toString());
     $this->assertEquals(2, $object->section_id);
-    $this->assertEquals(2, $object->object->mainParentNodeId());
+    $this->assertEquals(2, $object->getObject()->mainParentNodeId());
 
-    $translations_list =  $object->object->currentVersion()->translationList();
+    $translations_list =  $object->getObject()->currentVersion()->translationList();
 
     $this->assertEquals(count($translations_list), 2);
     $this->assertEquals($translations_list[0]->attribute('language_code'), 'eng-GB');

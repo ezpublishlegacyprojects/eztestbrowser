@@ -13,13 +13,13 @@ class ezpLoader
 
   protected function setContentObjectMap($object)
   {
-    $remote_id = $object->object->attribute('remote_id');
-    if (!$object->object->mainNodeID())
+    $remote_id = $object->getObject()->attribute('remote_id');
+    if (!$object->getObject()->mainNodeID())
     {
       throw new Exception('Object '.$remote_id.' doesn\'t have mainNodeID');
     }
 
-    $this->object_ids[$remote_id] = $object->object->mainNodeID();
+    $this->object_ids[$remote_id] = $object->getObject()->mainNodeID();
     $this->content_object_ids[$remote_id] = $object->id;
   }
 

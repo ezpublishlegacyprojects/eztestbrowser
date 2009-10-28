@@ -24,6 +24,7 @@ class idObject extends ezpObject
 {
   protected $repository = null;
   protected $parser_errors = array();
+  public $object;
   
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
   {
@@ -54,7 +55,7 @@ class idObject extends ezpObject
     return $this->repository;
   }
 
-  private function setMainNode($parent_node_id)
+  public function setMainNode($parent_node_id)
   {
     if (is_numeric($parent_node_id))
     {
@@ -111,6 +112,11 @@ class idObject extends ezpObject
     return $this;
   }
 
+  public function fromArray($data)
+  {
+    $this->hydrate($data);
+    $this->hydrateAttributes($data);
+  }
 
   /**
      * Sets the property $name to $value.
@@ -289,5 +295,10 @@ class idObject extends ezpObject
     public function getParserError()
     {
       return $this->parser_errors;
+    }
+
+    public function getObject()
+    {
+      return $this->object;
     }
 }
