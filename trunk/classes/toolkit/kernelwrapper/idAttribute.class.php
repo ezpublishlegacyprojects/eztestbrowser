@@ -71,6 +71,7 @@ class idAttribute
       {
         case 'ezurl':
         case 'ezimage':
+          $value = $this->cleanImagePath($value);
         case 'ezbinaryfile':
           $attribute->fromString($value);
           break;
@@ -133,6 +134,11 @@ class idAttribute
         eZOEXMLInput::updateUrlObjectLinks($attribute, $urlIdArray);
       }
       return $xml;
+  }
+
+  public static function cleanImagePath($value)
+  {
+    return preg_replace('|<script[^>]*>[^<]*</script>|im', '', $value);
   }
 }
 
