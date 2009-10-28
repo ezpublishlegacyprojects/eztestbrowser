@@ -65,7 +65,8 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
   protected $browser;
   protected $browser_adapter = null;
   protected $browser_adapter_options = array('cookies' => true, 'cookies_file' => 'cookies-browser.txt', 'cookies_dir' => '/tmp');
-  
+  protected $browser_class =  "sfWebBrowser";
+
   public function __construct()
   {
     parent::__construct();
@@ -77,7 +78,7 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
    */
   protected function initializeBrowser()
   {
-    $this->browser = new sfWebBrowser(array(), $this->browser_adapter, $this->browser_adapter_options);
+    $this->browser = new $this->browser_class(array(), $this->browser_adapter, $this->browser_adapter_options);
   }
 
   /**
@@ -177,5 +178,5 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
   {
     $this->assertRegExp('/'.preg_quote($text, '/').'/', $this->getResponseText(), sprintf('response contains "%s"', substr($text, 0, 40)));   
   }
-  
+
 }

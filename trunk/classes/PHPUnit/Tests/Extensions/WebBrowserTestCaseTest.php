@@ -45,7 +45,7 @@
 
 set_include_path(get_include_path().':/var/www');
 
-require_once 'PHPUnit/Extensions/WebBrowserTestCase.php';
+require_once dirname(__FILE__).'/../../Extensions/WebBrowserTestCase.php';
 
 /**
  * Tests for PHPUnit_Extensions_WebBrowserTestCase.
