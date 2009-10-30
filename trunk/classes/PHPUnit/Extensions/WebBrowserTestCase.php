@@ -115,7 +115,7 @@ class PHPUnit_Extensions_WebBrowserTestCase extends PHPUnit_Framework_TestCase
    * @param  array  $options   Options for the current test
    *
    */
-  protected function checkResponseElement($selector, $value = true, $options = array())
+  protected function checkResponseElement($selector, $value = 1, $options = array())
   {
     if (is_null($this->getResponseDom()))
     {
