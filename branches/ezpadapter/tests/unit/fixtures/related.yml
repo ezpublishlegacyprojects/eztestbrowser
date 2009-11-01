@@ -1,0 +1,20 @@
+Image:
+  image:
+    locations:
+      main: { parent_node_id: 51 }
+    attributes:
+      name:  An image
+      image: '<?php echo dirname(__FILE__).'/images/test.gif' ?>'
+
+Article:
+  article:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      title: An article
+      intro: description of an article
+    related: [ image ]
+    translations:
+      ita-IT:
+        title: An article
+        intro: description of an article

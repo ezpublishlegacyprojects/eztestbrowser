@@ -1,0 +1,12 @@
+Article:
+  test:
+    section_id: 2
+    locations:
+      main: { parent_node_id: 2}
+    attributes:
+      title: Test 2
+      intro: Introduzione
+      body:  Body
+    translations:
+      ita-IT:
+        title: Test Translated
