@@ -1,23 +1,18 @@
 <?php
 
-class ezpControllerTest extends ezpDatabaseTestCase
+require_once(dirname(__FILE__).'/../../../../autoload.php');
+
+class ezpControllerTest extends PHPUnit_Framework_TestCase
 {
-  protected $backupGlobals = true;
 
   protected function emptyEnvironment()
   {
-    unset($_SERVER['REQUEST_URI'],
-          $_SERVER['HTTP_HOST'],
-          $_SERVER['SERVER_NAME'],
-          $_SERVER['HTTP_USER_AGENT'],
-          $_SERVER['DOCUMENT_ROOT'],
-          $_SERVER['SCRIPT_FILENAME'],
-          $_SERVER['SCRIPT_NAME'],
-          $_SERVER['SERVER_PORT'],
-          $_SERVER['SERVER_PROTOCOL'],
-          $_SERVER['REQUEST_METHOD']
-        );
-
+    
+    unset($_SESSION);
+    unset($_COOKIE);
+    unset($_SERVER);
+    unset($_GET);
+    unset($_REQUEST);
   }
 
   public function setup()
@@ -32,9 +27,8 @@ class ezpControllerTest extends ezpDatabaseTestCase
 
   public function testBackendController()
   {
-    $this->markTestSkipped();
-    $_SERVER['REQUEST_URI']     = '/user/login';
-    $_SERVER['HTTP_HOST']       = 'panel-dev.casavinicolazonin.it';
+    $_SERVER['REQUEST_URI']     = '/plain_site_admin/user/login';
+    $_SERVER['HTTP_HOST']       = 'localhost';
 
     $_SERVER['SERVER_NAME']     = $_SERVER['HTTP_HOST'];
     $_SERVER['HTTP_USER_AGENT'] = 'ezpAdapter';
@@ -50,16 +44,15 @@ class ezpControllerTest extends ezpDatabaseTestCase
     $output = $controller->dispatch();
     unset($controller);
 
-    file_put_contents('/tmp/output.html', $output);
     $this->assertContains('amministrazione di eZ Publish', $output);
     
   }
 
   public function testFrontendController()
   {
-    $this->markTestSkipped();
+    // $this->markTestSkipped();
     $_SERVER['REQUEST_URI']     = '/user/login';
-    $_SERVER['HTTP_HOST']       = 'dev.casavinicolazonin.it';
+    $_SERVER['HTTP_HOST']       = 'localhost';
 
     $_SERVER['SERVER_NAME']     = $_SERVER['HTTP_HOST'];
     $_SERVER['HTTP_USER_AGENT'] = 'ezpAdapter';
@@ -74,8 +67,45 @@ class ezpControllerTest extends ezpDatabaseTestCase
     $output = $controller->dispatch();
     unset($controller);
     
+    $this->assertContains('Login', $output);
+    $this->assertContains('Plain site', $output);
+  }
 
-    $this->assertContains('Casa Vinicola Zonin', $output);
+  public function testezpAdapterFrontend()
+  {
+    $browser = new ezpWebBrowser(array(), 'ezpAdapter');
+    $browser->get('/plain_site/user/login');
+    $this->assertContains('<h1><a href="/plain_site">Plain site</a></h1>', $browser->getResponseText());
+    
+    $browser->setField('Login', 'admin');
+    $browser->setField('Password', 'publish');
+    $browser->clickButton('Login');
+
+    $this->assertContains('Refresh', $browser->getResponseText());
+    $browser->followRedirect();
+
+    $this->assertContains('Logout', $browser->getResponseText());
+    $browser->click('Logout(Administrator User)');
+    $browser->followRedirect();
+    $this->assertContains('Login', $browser->getResponseText());
+  }
+
+  public function testezpAdapterBackend()
+  {
+    $backend = new ezpWebBrowser(array(), 'ezpAdapter');
+    $backend->get('/plain_site_admin');
+    $this->assertContains('amministrazione di eZ Publish', $backend->getResponseText());
+    
+    $backend->setField('Login', 'admin');
+    $backend->setField('Password', 'publish');
+    $backend->clickButton('Login');
+
+    $this->assertContains('Refresh', $backend->getResponseText());
+    $backend->followRedirect();
+
+    $this->assertContains('Media', $backend->getResponseText());
   }
 
 }
+
+// function ezupdatedebugsettings() {}

@@ -1,6 +1,6 @@
 <?php
 
-class eZAdapter
+class ezpAdapter
 {
   protected
     $options             = array(),
@@ -26,8 +26,20 @@ class eZAdapter
   { 
     $url_info = parse_url($uri);    
     
-    $_SERVER['REQUEST_URI']     = isset($url_info['path']) ? $url_info['path'] : $uri;
-    $_SERVER['HTTP_HOST']       = isset($url_info['host']) ? $url_info['host'] : $this->options['host'];
+    $_SERVER['REQUEST_URI'] = isset($url_info['path']) ? $url_info['path'] : $uri;
+
+    $_SERVER['HTTP_HOST'] = null;
+    
+    if (isset($this->options['host']))
+    {
+      $_SERVER['HTTP_HOST'] = $this->options['host'];
+    }
+
+    if (isset($url_info['host']))
+    {
+      $_SERVER['HTTP_HOST'] = $url_info['host'];
+    }
+
     $_SERVER['SERVER_NAME']     = $_SERVER['HTTP_HOST'];
     $_SERVER['HTTP_USER_AGENT'] = 'ezpAdapter';
     $_SERVER['DOCUMENT_ROOT']   = dirname(__FILE__.'/../../../../../');

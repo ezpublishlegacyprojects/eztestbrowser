@@ -50,7 +50,8 @@ class ezpLoader
 
     foreach ($this->object_parameters->get('translations') as $language_code => $attributes)
     {
-      array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
+      array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 
+													'data_map' => $object->dataMap));
       $object->addTranslation($language_code, $attributes);
     }
   }
@@ -101,7 +102,7 @@ class ezpLoader
 
     if (!is_array($this->object_parameters->get('related')))
     {
-      throw new Exception('You must set related data in yaml');
+      throw new Exception('You must set related data');
     }
 
     foreach ($this->object_parameters->get('related') as $object_remote_id)
@@ -111,7 +112,7 @@ class ezpLoader
         $object_id = (int) $this->content_object_ids[$object_remote_id];
         if ($object->addContentObjectRelation($object_id) === false)
         {
-          throw new Exception('Somthing wrong with related object '.$object_remote_id);
+          throw new Exception('Something wrong with related object '.$object_remote_id);
         }
       }
     }

@@ -9,12 +9,12 @@ class ezpYamlDataTest extends idDatabaseTestCase
   }
 
   public function testLoadObjectsData()
-  {
+  {	
     $fixture = dirname(__FILE__) . '/fixtures/objects.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($fixture);
-
+		
     $object = new idObject();
     $object->fromeZContentObject(eZContentObject::fetchByRemoteID('test'));
 

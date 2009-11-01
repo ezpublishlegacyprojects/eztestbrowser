@@ -2,11 +2,11 @@
 
 class ezpController
 {
-  var $headerList;
-  var $scriptStartTime;
-  var $warningList = array();
-  var $access;
-  var $tempalte_result = null;
+  public $headerList;
+  protected $scriptStartTime;
+  protected $warningList = array();
+  protected $access;
+  protected $tempalte_result = null;
 
   public function __destruct()
   {
@@ -21,7 +21,6 @@ class ezpController
     unset($GLOBALS['eZCustomPageLayout']);
     unset($GLOBALS['eZDebugWarning']);
     unset($GLOBALS['eZDebugError']);
-
   }
 
   private function initializeCodePagePermissions()
@@ -53,7 +52,7 @@ class ezpController
     $this->siteBasics['module-repositories'] =& $this->moduleRepositories;
   }
 
-  public static function fetchModule( $uri, $check, &$module, &$module_name, &$function_name, &$params )
+  protected static function fetchModule( $uri, $check, &$module, &$module_name, &$function_name, &$params )
   {
       $module_name = $uri->element();
       if ( $check !== null and isset( $check["module"] ) )
@@ -84,7 +83,7 @@ class ezpController
   /*!
   \private
   */
-  public static function eZDisplayResult( $templateResult )
+  protected static function displayResult( $templateResult )
   {
       $output = null;
       if ( $templateResult !== null )
@@ -116,7 +115,7 @@ class ezpController
    Appends a new warning item to the warning list.
    \a $parameters must contain a \c error and \c text key.
   */
-  public function eZAppendWarningItem( $parameters = array() )
+  protected function appendWarningItem( $parameters = array() )
   {
       $parameters = array_merge( array( 'error' => false,
                                         'text' => false,
@@ -130,16 +129,16 @@ class ezpController
                               'identifier' => $identifier );
   }
 
-  public static function eZFatalError()
+  protected static function fatalError()
   {
     //eZDebug::setHandleType( eZDebug::HANDLE_NONE );
     print( "<b>Fatal error</b>: eZ Publish did not finish its request<br/>" );
     print( "<p>The execution of eZ Publish was abruptly ended, the debug output is present below.</p>" );
     $templateResult = null;
-    self::eZDisplayResult( $templateResult );
+    self::displayResult( $templateResult );
   }
   
-  public static function eZDBCleanup()
+  protected static function dbCleanup()
   {
       if ( class_exists( 'eZDB' )
            and eZDB::hasInstance() )
@@ -152,7 +151,7 @@ class ezpController
   /*!
    Reads settings from i18n.ini and passes them to eZTextCodec.
   */
-  public function eZUpdateTextCodecSettings()
+  protected function updateTextCodecSettings()
   {
       $ini = eZINI::instance( 'i18n.ini' );
 
@@ -165,7 +164,7 @@ class ezpController
   /*!
    Reads settings from site.ini and passes them to eZDebug.
   */
-  public function eZUpdateDebugSettings()
+  protected function updateDebugSettings()
   {
       $ini = eZINI::instance();
 
@@ -636,15 +635,20 @@ class ezpController
 
     if ( $currentUser->isLoggedIn() )
     {
-        setcookie( 'is_logged_in', 'true', 0, $cookiePath );
-        header( 'Etag: ' . $currentUser->attribute( 'contentobject_id' ) );
+        self::setcookie( 'is_logged_in', 'true', 0, $cookiePath );
+        self::header( 'Etag: ' . $currentUser->attribute( 'contentobject_id' ) );
     }
     else if ( isset( $_COOKIE['is_logged_in'] ) )
     {
-        setcookie( 'is_logged_in', false, 0, $cookiePath );
+        self::setcookie( 'is_logged_in', false, 0, $cookiePath );
     }
   }
 
+  private static function setCookie()
+  {
+
+  }
+  
   private function redirect()
   {
     ob_start();
@@ -731,7 +735,7 @@ class ezpController
             if ( isset( $GLOBALS['eZDebugError'] ) and
                  $GLOBALS['eZDebugError'] )
             {
-                $this->eZAppendWarningItem( array( 'error' => array( 'type' => 'error',
+                $this->appendWarningItem( array( 'error' => array( 'type' => 'error',
                                                               'number' => 1,
                                                               'count' => $GLOBALS['eZDebugErrorCount'] ),
                                             'identifier' => 'ezdebug-first-error',
@@ -741,7 +745,7 @@ class ezpController
             if ( isset( $GLOBALS['eZDebugWarning'] ) and
                  $GLOBALS['eZDebugWarning'] )
             {
-                $this->eZAppendWarningItem( array( 'error' => array( 'type' => 'warning',
+                $this->appendWarningItem( array( 'error' => array( 'type' => 'warning',
                                                               'number' => 1,
                                                               'count' => $GLOBALS['eZDebugWarningCount'] ),
                                             'identifier' => 'ezdebug-first-warning',
@@ -759,12 +763,11 @@ class ezpController
 
         eZDebug::addTimingPoint( "End" );
 
-        self::eZDisplayResult( $templateResult );
+        self::displayResult( $templateResult );
     }
 
     $out = ob_get_contents();
     ob_end_clean();
-    ob_end_flush();
 
     eZExecution::cleanup();
     eZExecution::setCleanExit();
@@ -883,7 +886,7 @@ class ezpController
             if ( isset( $GLOBALS['eZDebugError'] ) and
                  $GLOBALS['eZDebugError'] )
             {
-                $this->eZAppendWarningItem( array( 'error' => array( 'type' => 'error',
+                $this->appendWarningItem( array( 'error' => array( 'type' => 'error',
                                                               'number' => 1 ,
                                                               'count' => $GLOBALS['eZDebugErrorCount'] ),
                                             'identifier' => 'ezdebug-first-error',
@@ -893,7 +896,7 @@ class ezpController
             if ( isset( $GLOBALS['eZDebugWarning'] ) and
                  $GLOBALS['eZDebugWarning'] )
             {
-                $this->eZAppendWarningItem( array( 'error' => array( 'type' => 'warning',
+                $this->appendWarningItem( array( 'error' => array( 'type' => 'warning',
                                                               'number' => 1,
                                                               'count' => $GLOBALS['eZDebugWarningCount'] ),
                                             'identifier' => 'ezdebug-first-warning',
@@ -968,13 +971,11 @@ class ezpController
     //header( $string );
   }
 
-  public function dispatch()
+  public function __construct()
   {
-
     self::checkPHPVersion();
     $this->setTimezone();
     self::ignoreUserAbort();
-
     $this->scriptStartTime = microtime( true );
     $this->use_external_css = true;
     $this->show_page_layout = true;
@@ -983,19 +984,23 @@ class ezpController
     $this->urlTranslatorAllowed = true;
     $this->validityCheckRequired = false;
     $this->userObjectRequired = true;
-    $this->sessionRequired = true;
+    $this->sessionRequired = false;
     $this->dbRequired = true;
     $this->noCacheAdviced = true;
     $this->siteDesignOverride = false;
     $this->policyCheckOmitList = array();
     $this->moduleRepositories = array();
     $this->initializeSiteBasics();
+  }
+
+  public function dispatch()
+  {
     $this->addGlobal( 'eZSiteBasics', $this->siteBasics, true );
     $this->addGlobal( 'eZRedirection', false );
     self::setErrorReporting();
     eZDebugSetting::setDebugINI( eZINI::instance( 'debug.ini' ) );
-    $this->eZUpdateTextCodecSettings();
-    $this->eZUpdateDebugSettings();
+    $this->updateTextCodecSettings();
+    $this->updateDebugSettings();
     $this->ini = eZINI::instance();
     $this->setCorrectTimezone();
     $this->initializeCodePagePermissions();
@@ -1085,6 +1090,6 @@ class ezpController
     eZDB::checkTransactionCounter();
     eZExecution::cleanup();
     
-    return self::eZDisplayResult( $this->templateResult );
+    return self::displayResult( $this->templateResult );
   }
 }
