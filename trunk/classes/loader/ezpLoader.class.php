@@ -23,14 +23,6 @@ class ezpLoader
     $this->content_object_ids[$remote_id] = $object->id;
   }
 
-  protected function setClassAttribute($attribute, $attribute_name, $value)
-  {
-    if(isset($value))
-    {
-      $attribute->setAttribute($attribute_name, $value);
-    }
-  }
-
   protected function getIdentifierFromName($name)
   {
     return strtolower($name);
@@ -118,7 +110,7 @@ class ezpLoader
   }
 
   /*
-   * load url aliases for object
+   * Load url aliases for object
    *
    * @param idObject $object
    */
@@ -143,6 +135,11 @@ class ezpLoader
 
   }
 
+  /**
+   * Log messages
+   *
+   * @param string $message
+   */
   protected function output($message)
   {
     if ($this->verbose)
@@ -152,7 +149,12 @@ class ezpLoader
   }
 
 
-
+  /**
+   * Retrieve parent node id from a remote id or from an integer
+   *
+   * @param mixed $parent_node_id
+   * @return integer
+   */
   protected function getParentNodeId($parent_node_id)
   {
     if ((int)$parent_node_id == 0)
@@ -216,99 +218,65 @@ class ezpLoader
     return $object;
   }
 
+  /**
+   * Override this method if you need to clear class_identifier before being loaded
+   *
+   * @param string $class_identifier
+   * @return string
+   */
+  protected function clearClassIdentifier($class_identifier)
+  {
+    return $class_identifier;
+  }
+
+  /**
+   * Build object from array
+   *
+   * @param array $data
+   */
   public function buildObjects($data)
   { 
-    foreach ($data as $object_class => $objects)
+    foreach ($data as $class_identifier => $objects)
     {
-      $object_class = trim($object_class, '_');
+      $class_identifier = $this->clearClassIdentifier($class_identifier);
 
       foreach ($objects as $remote_id => $object_parameters)
       {
-        $object_parameters['class_identifier'] = $object_class;
+        $object_parameters['class_identifier'] = $class_identifier;
         $object_parameters['remote_id'] = $remote_id;
         $this->buildObject($object_parameters);
       }
     }
   }
 
-  public function buildClasses($file)
+  /**
+   * Build class from array
+   *
+   * @param string $name
+   * @param array $data
+   */
+  public function buildClass($name, $data)
   {
-    $data = $this->parseYaml($file);
+    $this->output('Creating class '.$name);
+    
+    $class = new ezpClass($name, $this->getIdentifierFromName($name), $data['object_name']);
+    $class->fromArray($data);
+    $class->addAttributesFromArray($data['attributes']);
+    $class->addTranslationsFromArray($data['translations']);
+    $class->store();
+    $class->addToGroup('Content');
+  }
 
-    foreach ($data as $name => $class_data)
+  /**
+   * Build classes from an array
+   *
+   * @param array $data
+   */
+  public function buildClasses($data)
+  {
+    foreach ($data as $name => $data)
     {
-      $class = new ezpClass($name, $this->getIdentifierFromName($name), $class_data['object_name']);
-      if (isset($class_data['is_container']))
-      {
-        $class->class->setAttribute('is_container', (bool)$class_data['is_container']);
-      }
-
-      foreach ($class_data['attributes'] as $identifier => $attribute_data)
-      {
-        $attribute = $class->add($attribute_data['name'], $identifier, $attribute_data['type']);
-
-        if (isset($attribute_data['can_translate']))
-        {
-          $this->setClassAttribute($attribute, 'can_translate', $attribute_data['can_translate']);
-        }
-
-        if (isset($attribute_data['is_required']))
-        {
-          $this->setClassAttribute($attribute, 'is_required', $attribute_data['is_required']);
-        }
-
-        if (isset($attribute_data['is_information_collector']))
-        {
-          $this->setClassAttribute($attribute, 'is_information_collector', $attribute_data['is_information_collector']);
-        }
-
-        if (isset($attribute_data['options']) && $attribute_data['type'] == 'ezselection')
-        {
-          // Serialize XML
-          $doc = new DOMDocument('1.0', 'utf-8');
-          $root = $doc->createElement("ezselection");
-          $doc->appendChild($root);
-
-          $options = $doc->createElement("options");
-
-          $root->appendChild($options);
-          foreach ($attribute_data['options'] as $index => $value)
-          {
-              $optionNode = $doc->createElement("option");
-              $optionNode->setAttribute('id', $index);
-              $optionNode->setAttribute('name', $value);
-
-              $options->appendChild($optionNode);
-          }
-
-          $xml = $doc->saveXML();
-          $this->setClassAttribute($attribute, 'data_text5', $xml);
-        }
-
-        $attribute->store();
-      }
-
-      $attributes = $class->class->dataMap();
-      $this->output('class name: '.$name);
-      foreach ($class_data['translations'] as $language_code => $language_data)
-      {
-        eZContentLanguage::fetchByLocale($language_code, true);
-
-        $class->class->setName($language_data['name'], $language_code);
-        //ezContentClassAttribute::removeObject($def);
-
-        foreach ($language_data['attributes'] as $identifier => $name)
-        {
-          $this->output("\tsetting attribute name: ".$identifier);
-          $attributes[$identifier]->setName($name, $language_code);
-          $attributes[$identifier]->store();
-        }
-      }
-
-      $class->store();
-
-      $this->classGroup = eZContentClassClassGroup::create( $class->id, $class->version, 1, 'Content');
-      $this->classGroup->store();
+      $this->buildClass($name, $data);
     }
   }
 

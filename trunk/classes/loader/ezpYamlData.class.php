@@ -50,9 +50,27 @@ class ezpYamlData extends ezpLoader
     $this->buildObjects($data);
   }
 
+  /**
+   * Clear class_identifier
+   * @see parent::clearClassIdentifier
+   *
+   * @param string $object_class
+   * @return string
+   */
+  protected function clearClassIdentifier($class_identifier)
+  {
+    return trim(str_replace(intval($class_identifier), '', $class_identifier), '_');
+  }
+
+  /**
+   * Load classes data from yaml file
+   *
+   * @param string $file
+   */
   public function loadClassesData($file)
   {
-    $this->buildClasses($file);
+    $data = $this->parseYaml($file);
+    $this->buildClasses($data);
   }
 
 }

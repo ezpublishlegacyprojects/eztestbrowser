@@ -26,5 +26,5 @@ class ezpLoaderTest extends idDatabaseTestCase
 
     $this->assertEquals('3', (string)$options_xml->options->option[2]->attributes()->id);
     $this->assertEquals('opzione3', (string)$options_xml->options->option[2]->attributes()->name);
-  }
+  }  
 }

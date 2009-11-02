@@ -303,4 +303,21 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals($node->attribute('node_id'), 2);
   }
 
+  public function testClassIdentifierAlias()
+  {
+    $fixture_objects = dirname(__FILE__) . '/fixtures/multiple_objects.yml';
+
+    $data = new ezpYamlData();
+    $data->loadObjectsData($fixture_objects);
+
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder1') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder2') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder3') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder4') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder5') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder6') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder7') instanceof eZContentObject);
+    $this->assertTrue(eZContentObject::fetchByRemoteID('folder8') instanceof eZContentObject);
+  }
+
 }

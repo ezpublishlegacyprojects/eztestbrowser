@@ -130,6 +130,134 @@ class ezpClass
         $this->$name = $value;
     }
 
+    /**
+     * Add class attributes from array
+     *
+     * @param array $data
+     */
+    public function fromArray($data)
+    {
+      foreach($data as $key => $value)
+      {
+        if($this->hasAttribute($key))
+        {
+          $this->setAttribute($key, $value);
+        }
+      }
+    }
+
+    /**
+     * Add data map attributes class from an array
+     *
+     * @param array $attributes
+     * @return array
+     */
+    public function addAttributesFromArray($attributes)
+    {
+      foreach ($attributes as $identifier => $attribute_data)
+      {
+        $attribute = $this->add($attribute_data['name'], $identifier, $attribute_data['type']);
+
+        if (isset($attribute_data['can_translate']))
+        {
+          $attribute->setAttribute('can_translate', $attribute_data['can_translate']);
+        }
+
+        if (isset($attribute_data['is_required']))
+        {
+          $attribute->setAttribute('is_required', $attribute_data['is_required']);
+        }
+
+        if (isset($attribute_data['is_information_collector']))
+        {
+          $attribute->setAttribute('is_information_collector', $attribute_data['is_information_collector']);
+        }
+
+        if (isset($attribute_data['options']) && $attribute_data['type'] == 'ezselection')
+        {
+          // Serialize XML
+          $doc = new DOMDocument('1.0', 'utf-8');
+          $root = $doc->createElement("ezselection");
+          $doc->appendChild($root);
+
+          $options = $doc->createElement("options");
+
+          $root->appendChild($options);
+          foreach ($attribute_data['options'] as $index => $value)
+          {
+              $optionNode = $doc->createElement("option");
+              $optionNode->setAttribute('id', $index);
+              $optionNode->setAttribute('name', $value);
+
+              $options->appendChild($optionNode);
+          }
+
+          $xml = $doc->saveXML();
+          $attribute->setAttribute($attribute, 'data_text5', $xml);
+        }
+
+        $attribute->store();
+      }
+
+      return $this->class->dataMap();
+    }
+
+    /**
+     * Proxy function to eZContentClass methods
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+      return call_user_func_array(array($this->class, $name), $arguments);
+    }
+
+    /**
+     * Add attributes translated from an array
+     *
+     * @param array $attributes
+     * @param string $language_code
+     */
+    public function addAttributesTranslationsFromArray($attributes, $language_code)
+    {
+      $data_map = $this->class->dataMap();
+
+      foreach ($attributes as $identifier => $name)
+      {
+        $this->output("\tsetting attribute name: ".$identifier);
+        $data_map[$identifier]->setName($name, $language_code);
+        $data_map[$identifier]->store();
+      }
+    }
+
+    /**
+     * Add a class to group
+     *
+     * @param string $group
+     */
+    public function addToGroup($group)
+    {
+      $classGroup = eZContentClassClassGroup::create($this->id, $this->version, 1, $group);
+      $classGroup->store();
+    }
+
+    /**
+     * Add translations data from array
+     *
+     * @param array $translations
+     */
+    public function addTranslationsFromArray($translations)
+    {
+      foreach ($translations as $language_code => $language_data)
+      {
+        eZContentLanguage::fetchByLocale($language_code, true);
+        $this->setName($language_data['name'], $language_code);
+        $this->addAttributesTranslationsFromArray($language_data['attributes'], $language_code);
+      }
+    }
+
 }
 
 ?>
