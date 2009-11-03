@@ -71,9 +71,9 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   protected function setUp()
   {
     $this->fixturesSetUp();
-
+    
     if($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()))
-    { 
+    {
       $this->initialize();
       $this->insertSql();
   
@@ -108,14 +108,4 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     unset($GLOBALS['eZContentLanguageMask']);
   }
 
-  /**
-   * Fetch an ez object by remote id
-   * 
-   * @param string $remote_id
-   * @return eZContentObject
-   */
-  public function fetchObjectByRemoteId($remote_id)
-  {
-    return eZContentObject::fetchByRemoteId($remote_id);
-  }
 }

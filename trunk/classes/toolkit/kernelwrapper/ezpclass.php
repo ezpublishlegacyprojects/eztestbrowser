@@ -193,7 +193,7 @@ class ezpClass
           }
 
           $xml = $doc->saveXML();
-          $attribute->setAttribute($attribute, 'data_text5', $xml);
+          $attribute->setAttribute('data_text5', $xml);
         }
 
         $attribute->store();
