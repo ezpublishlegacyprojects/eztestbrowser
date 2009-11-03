@@ -164,12 +164,6 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
       $string = $this->stripTagAttribute($string, 'cellpadding');
       $string = $this->stripTagAttribute($string, 'border');
 
-      $string = str_replace('à', '&agrave;', $string);
-      $string = str_replace('é', '&eacute;', $string);
-      $string = str_replace('ù', '&ugrave;', $string);
-      $string = str_replace('ì', '&igrave;', $string);
-      
-
       $string = str_ireplace('<sup>', '<custom name="sup">', $string);
       $string = str_ireplace('</sup>', '</custom>', $string);
       $string = str_ireplace('<u>', '<em>', $string);
@@ -196,9 +190,17 @@ class idXmlInputParser extends eZSimplifiedXMLInputParser
       $string = preg_replace('|href=\s+"|m', 'href="', $string);
       $string = preg_replace('|<a[^>]*?></a>|m', '', $string);
 
-      $string = str_ireplace('’', "'", $string);
-      $string = str_replace('è', '&egrave;', $string);
-      $string = html_entity_decode($string, ENT_QUOTES);
+//      $string = str_replace('à', '&agrave;', $string);
+//      $string = str_replace('é', '&eacute;', $string);
+//      $string = str_replace('ù', '&ugrave;', $string);
+//      $string = str_replace('ì', '&igrave;', $string);
+//      $string = str_replace('ò', '&ograve;', $string);
+//
+//      $string = str_ireplace('’', "'", $string);
+//      $string = str_replace('è', '&egrave;', $string);
+
+
+      $string = html_entity_decode($string, ENT_QUOTES, 'UTF-8');
       $string = str_ireplace('&rsquo;', "'", $string);
 
       $string = preg_replace('|<([0-9]+)|', '&lt;\1', $string);

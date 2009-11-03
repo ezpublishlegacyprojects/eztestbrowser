@@ -137,10 +137,10 @@ class idObject extends ezpObject
           switch($attribute->attribute('data_type_string'))
           {
             case 'ezxmltext':
-              if (mb_detect_encoding($value) != 'UTF-8')
-              {
-                $value = utf8_encode($value);
-              }
+//              if (mb_detect_encoding($value) != 'UTF-8')
+//              {
+//                $value = utf8_encode($value);
+//              }
               $attribute->fromString(idAttribute::processXmlTextData($value, $attribute, $this, $this->repository));
               break;
             case 'ezdate':

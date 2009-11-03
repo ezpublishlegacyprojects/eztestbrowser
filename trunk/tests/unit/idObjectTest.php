@@ -48,6 +48,19 @@ class idObjectTest extends ezpDatabaseTestCase
     $this->assertEquals('Article title', (string)$object->title);
     $this->assertEquals('remote_id_from_array', $object->remote_id);
   }
+
+  public function testSpecialCharacters()
+  {
+    eZContentLanguage::fetchByLocale('ita-IT', true);
+
+    $object = new idObject('article', 2);
+    $object->title = 'New article special chars';
+    $object->body = "’ &bull; è é ì ò à ù &egrave; &agrave;";
+
+    $this->assertContains("’ • è é ì ò à ù", $object->body->__toString());
+    //$this->assertEquals("’ • è é ì ò à ù è à", $object->body->__toString());
+
+  }
 }
 
 ?>
