@@ -48,6 +48,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 
   protected function initialize()
   {
+    eZCache::clearAll();
+    
     $GLOBALS['eZTextCodecInternalCharsetReal'] = 'utf-8';
     $this->charset = $GLOBALS['eZTextCodecInternalCharsetReal'];
 
