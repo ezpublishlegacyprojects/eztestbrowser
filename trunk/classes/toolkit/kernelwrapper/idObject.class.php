@@ -24,10 +24,17 @@ class idObject extends ezpObject
 {
   protected $repository = null;
   protected $parser_errors = array();
+  protected $database;
+  protected $class;
+  protected $mainNode;
+  protected $nodes = array();
+
   public $object;
   
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
   {
+    $this->database = eZDB::instance();
+    
     if ($classIdentifier)
     {
       $this->class = eZContentClass::fetchByIdentifier($classIdentifier);
@@ -77,25 +84,17 @@ class idObject extends ezpObject
     return parent::addNode($parent_node_id);
   }
 
-  public function hydrate($object_parameters)
-  {
-    foreach ($object_parameters as $name => $value)
-    {
-      if($this->object->hasAttribute($name))
-      {
-        $this->object->setAttribute($name, $value);
-      }
-    }
-
-    $this->store();
-  }
-
-  public function hydrateAttributes($attributes)
+  public function hydrate($attributes, $only_data_map = false)
   {
     foreach ($attributes as $name => $value)
     {
+      if($this->object->hasAttribute($name) && !$only_data_map)
+      {
+        $this->object->setAttribute($name, $value);
+      }
       $this->$name = $value;
     }
+    $this->store();
   }
 
   public function fromeZContentObject(eZContentObject $object)
@@ -112,13 +111,25 @@ class idObject extends ezpObject
     return $this;
   }
 
+  public function fromeZContentObjectVersion(eZContentObjectVersion $object)
+  {
+    if (!$object)
+    {
+      throw new Exception('Object is invalid');
+    }
+
+    $this->object = $object;
+    $this->data_map = $this->object->dataMap();
+
+    return $this;
+  }
+
   public function fromArray($data)
   {
     $this->hydrate($data);
-    $this->hydrateAttributes($data);
   }
 
-  /**
+  /*
      * Sets the property $name to $value.
      *
      * @throws ezcBasePropertyNotFoundException if the property does not exist.
@@ -127,178 +138,131 @@ class idObject extends ezpObject
      * @ignore
      */
   public function __set($name, $value)
-  {
-    switch($name)
+  { 
+    try
     {
-      default:
-        if (isset($this->dataMap[$name]))
-        {
-          $attribute = $this->dataMap[$name];
-          switch($attribute->attribute('data_type_string'))
-          {
-            case 'ezxmltext':
-//              if (mb_detect_encoding($value) != 'UTF-8')
-//              {
-//                $value = utf8_encode($value);
-//              }
-              $attribute->fromString(idAttribute::processXmlTextData($value, $attribute, $this, $this->repository));
-              break;
-            case 'ezdate':
-              if (preg_match('/\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/', $value))
-              {
-                $value = strtotime($value);
-              }
-            case 'ezobjectrelation':
-            case 'ezobjectrelationlist':
-            case 'ezinteger':
-            case 'ezboolean':
-            case 'ezbinaryfile':
-              $attribute->fromString($value);
-              break;
-            default:
-              parent::__set($name, $value);
-              break;
-          }
+      $attribute = new idAttribute($this, $name);
+      $attribute->fromString($value);
+    }
+    catch(ezpInvalidObjectAttributeException $e)
+    { 
+      $this->object->attribute($name, $value);
+    }
+  }
 
-          $this->dataMap[$name]->store();
-        }
-        else
+  protected function addVersionIn($newLanguageCode)
+  {
+    eZContentLanguage::fetchByLocale($newLanguageCode, true);
+    $this->refresh();
+    $this->object->cleanupInternalDrafts();
+
+    $version = $this->object->createNewVersionIn( $newLanguageCode );
+    $version->setAttribute( 'modified', time() );
+    $version->setAttribute( 'status', eZContentObjectVersion::STATUS_DRAFT );
+    $version->store();
+
+    return $version;
+  }
+
+  /*
+   * Adds a translation in language $newLanguageCode for object
+   *
+   * @param string $newLanguageCode
+   * @param mixed $translationData array( attribute identifier => attribute value )
+   * @return void
+   */
+  public function addTranslation( $newLanguageCode, $translationData )
+  {
+    $version = $this->addVersionIn($newLanguageCode);
+
+    $new_version = new idObject();
+    $new_version->fromeZContentObjectVersion($version);
+
+    $versionDataMap = $version->dataMap();
+
+    $this->database->begin();
+
+    // @TODO: Add generic datatype support here
+
+    foreach ( $translationData as $attr => $value )
+    {
+        if ( $versionDataMap[$attr]->attribute( 'data_type_string') == "ezxmltext" )
         {
-          // eZPersistentObject sets a class properties to store
-          // attribute information
-          $this->$name = $value;
+            $value = idAttribute::processXmlTextData( $value, $versionDataMap[$attr], $this, $this->repository );
+        }
+
+        $versionDataMap[$attr]->fromString($value);
+        $versionDataMap[$attr]->store();
+    }
+
+    $this->database->commit();
+
+    //Update the content object name
+    $this->database->begin();
+    $this->object->setName( $this->class->contentObjectName( $this->object,
+                                                             $version->attribute( 'version' ),
+                                                             $newLanguageCode ),
+                            $version->attribute( 'version' ), $newLanguageCode );
+    $this->database->commit();
+
+
+    // Finally publish object
+    self::publishContentObject( $this->object, $version );
+  }
+
+  /*
+   * Returns the value of the property $name.
+   *
+   * @throws ezcBasePropertyNotFoundException if the property does not exist.
+   * @param string $name
+   * @ignore
+   */
+  public function __get($name)
+  {
+    switch ($name)
+    {
+      case 'dataMap':
+        if ( isset($this->object) )
+        {
+          return $this->object->dataMap();
+        }
+        return array();
+
+      default:
+        try
+        {
+          return new idAttribute($this, $name);
+        }
+        catch(Exception $e)
+        {
+          return $this->object->attribute( $name );
         }
     }
   }
 
-     /**
-     * Adds a translation in language $newLanguageCode for object
-     *
-     * @param string $newLanguageCode
-     * @param mixed $translationData array( attribute identifier => attribute value )
-     * @return void
-     */
-    public function addTranslation( $newLanguageCode, $translationData )
-    {
-        eZContentLanguage::fetchByLocale($newLanguageCode, true);
-        
-        // Make sure to refresh the objects data.
-        $this->refresh();
+  public function setMainLocation($node_id)
+  {
+    $this->addNode($node_id, true);
+  }
 
-        $this->object->cleanupInternalDrafts();
-        $version = $this->object->createNewVersionIn( $newLanguageCode );
-        $version->setAttribute( 'status', eZContentObjectVersion::STATUS_INTERNAL_DRAFT );
-        $version->store();
+  public function addLanguage($language_code)
+  {
+    $this->addTranslation($language_code);
+    $this->publish();
+  }
 
-        $newVersion = $this->object->version( $version->attribute( 'version' ) );
-        $newVersionAttributes = $newVersion->contentObjectAttributes( $newLanguageCode );
+  public function setParserError($parser_errors, $name)
+  {
+    $this->parser_errors[$name] = $parser_errors;
+  }
 
-        $versionDataMap = self::createDataMap( $newVersionAttributes );
+  public function getParserError()
+  {
+    return $this->parser_errors;
+  }
 
-        // Start updating new version
-        $version->setAttribute( 'modified', time() );
-        $version->setAttribute( 'status', eZContentObjectVersion::STATUS_DRAFT );
-
-        $db = eZDB::instance();
-        $db->begin();
-
-        $version->store();
-
-        // @TODO: Add generic datatype support here
-
-        foreach ( $translationData as $attr => $value )
-        {
-            if ( $versionDataMap[$attr]->attribute( 'data_type_string') == "ezxmltext" )
-            {
-                $value = $this->processXmlTextData( $value, $versionDataMap[$attr], $this->repository );
-            }
-
-            $versionDataMap[$attr]->fromString($value);
-            $versionDataMap[$attr]->store();
-        }
-
-        $db->commit();
-
-        //Update the content object name
-        $db->begin();
-        $this->object->setName( $this->class->contentObjectName( $this->object,
-                                                                 $version->attribute( 'version' ),
-                                                                 $newLanguageCode ),
-                                $version->attribute( 'version' ), $newLanguageCode );
-        $db->commit();
-
-
-        // Finally publish object
-        self::publishContentObject( $this->object, $version );
-    }
-
-    private static function createDataMap($attributeArray)
-    {
-      $ret = array();
-      foreach($attributeArray as $attribute)
-      {
-        $ret[$attribute->contentClassAttributeIdentifier()] = $attribute;
-      }
-      return $ret;
-    }
-
-    private function processXmlTextData($value, $attribute, $repository = null)
-    {
-      return idAttribute::processXmlTextData($value, $attribute, $this, $repository);
-    }
-
-    /**
-     * Returns the value of the property $name.
-     *
-     * @throws ezcBasePropertyNotFoundException if the property does not exist.
-     * @param string $name
-     * @ignore
-     */
-    public function __get($name) 
-    {
-
-      switch ($name) {
-        case 'dataMap':
-          if ( isset($this->object) )
-          {
-            return $this->object->dataMap();
-          }
-          return array();
-
-        default:
-          
-          if (isset( $this->dataMap[$name]))
-          {
-            return new idAttribute($this->dataMap[$name], $this);
-          }
-
-          return $this->object->attribute( $name );
-      }
-    }
-
-    public function setMainLocation($node_id)
-    {
-      $this->addNode($node_id, true);
-    }
-
-    public function addLanguage($language_code)
-    {
-      $this->addTranslation($language_code);
-      $this->publish();
-    }
-
-    public function setParserError($parser_errors, $name)
-    {
-      $this->parser_errors[$name] = $parser_errors;
-    }
-
-    public function getParserError()
-    {
-      return $this->parser_errors;
-    }
-
-    public function getObject()
-    {
+  public function getObject()
+  {
       return $this->object;
     }
 }

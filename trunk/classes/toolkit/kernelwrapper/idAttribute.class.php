@@ -4,11 +4,32 @@ class idAttribute
 {
   protected $object;
   protected $attribute;
+  protected $name;
 
-  public function __construct(eZContentObjectAttribute $attribute, idObject $object)
+  public function __construct(idObject $object, $name, $language_code = null)
   {
+    if(!($object instanceof idObject))
+    {
+      throw new ezpInvalidObjectException('Object is mandatory');
+    }
+    
+    if(!isset($object->dataMap[$name]) || !($object->dataMap[$name] instanceof eZContentObjectAttribute))
+    {
+      throw new ezpInvalidObjectAttributeException('Attribute "'.$name.'" is invalid');
+    }
+
     $this->object = $object;
-    $this->attribute = $attribute;
+    $this->name = $name;
+
+    if (is_null($language_code))
+    {
+      $this->attribute = $object->dataMap[$name];
+    }
+    else
+    {
+      $this->attribute = $object->dataMap[$name]->language($language_code);
+    }
+    
   }
 
   public function __toString()
@@ -33,7 +54,7 @@ class idAttribute
     
     if ($language)
     { 
-      return new idAttribute($this->attribute->language($language_code));
+      return new idAttribute($this->object, $this->name, $language_code);
     }
 
     if (isset($this->attribute->$name))
@@ -139,6 +160,31 @@ class idAttribute
   public static function cleanImagePath($value)
   {
     return preg_replace('|<script[^>]*>[^<]*</script>|im', '', $value);
+  }
+
+  public function fromString($value)
+  {
+    switch($this->attribute->attribute('data_type_string'))
+    {
+      case 'ezxmltext':
+        $this->attribute->fromString(idAttribute::processXmlTextData($value, $this->attribute, $this->object, $this->object->repository));
+        break;
+      case 'ezdate':
+        if (preg_match('/\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/', $value))
+        {
+          $value = strtotime($value);
+        }
+      case 'ezobjectrelation':
+      case 'ezobjectrelationlist':
+      case 'ezinteger':
+      case 'ezboolean':
+      case 'ezbinaryfile':
+      default:
+        $this->attribute->fromString($value);
+        break;
+    }
+
+    $this->attribute->store();
   }
 }
 

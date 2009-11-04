@@ -199,7 +199,7 @@ class ezpLoader
     $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
 
     $object->hydrate($this->object_parameters->getAll());
-    $object->hydrateAttributes($this->object_parameters->get('attributes'));
+    $object->hydrate($this->object_parameters->get('attributes'), true);
 
     $this->loadLocations($object);
     $this->loadTranslations($object);
@@ -262,7 +262,10 @@ class ezpLoader
     $class = new ezpClass($name, $this->getIdentifierFromName($name), $data['object_name']);
     $class->fromArray($data);
     $class->addAttributesFromArray($data['attributes']);
-    $class->addTranslationsFromArray($data['translations']);
+    if (isset($data['translations']))
+    {
+      $class->addTranslationsFromArray($data['translations']);
+    }
     $class->store();
     $class->addToGroup('Content');
   }

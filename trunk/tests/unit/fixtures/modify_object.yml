@@ -1,0 +1,34 @@
+Article:
+  article:
+    locations:
+      main:      { parent_node_id: 2}
+    attributes:
+      title: Articolo del...
+    translations:
+      ita-IT:
+         title: Articolo del
+
+10_Folder:
+  folder:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      name: Folder before change
+      description: test english
+    translations:
+      ita-IT:
+        name: Folder prima del cambiamento
+        description: test italiano
+
+20_Folder:
+  folder:
+    id: folder
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      name: Folder after change
+      description: test english modified
+    translations:
+      ita-IT:
+        name: Folder dopo del cambiamento
+        description: test italiano modificato

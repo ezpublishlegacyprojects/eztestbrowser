@@ -14,6 +14,38 @@ class idAttributeTest extends PHPUnit_Framework_TestCase
 
     $this->assertEquals('download\ERM_LOGO_SMALL.jpg', $result);
   }
+
+  public function testConstructAttributeParameter()
+  {
+    try
+    {
+      $attribute = new idAttribute(null);
+    }
+    catch(ezpInvalidObjectException $e)
+    {
+      $this->assertContains('Object is mandatory', $e->getMessage());
+      return;
+    }
+
+    $this->fail('Not thrown an exception');
+  }
+
+  public function testConstructObjectParameter()
+  {
+    $object = idObjectRepository::retrieveById('1');
+    
+    try
+    {
+      $attribute = new idAttribute($object, 'non esistente');
+    }
+    catch(ezpInvalidObjectAttributeException $e)
+    {
+      $this->assertContains('Attribute "non esistente" is invalid', $e->getMessage());
+      return;
+    }
+
+    $this->fail('Not thrown an exception');
+  }
 }
 
 ?>

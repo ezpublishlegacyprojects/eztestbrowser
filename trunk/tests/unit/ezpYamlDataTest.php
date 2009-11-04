@@ -91,10 +91,6 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $attributes = $childrens[2]->datamap();
     $this->assertEquals('Notizia 1', $attributes['title']->language('ita-IT')->content());
 
-//    $this->assertEquals('Notizia 3', $childrens[0]->getName('ita-IT'));
-//    $this->assertEquals('Notizia 2', $childrens[1]->getName('ita-IT'));
-//    $this->assertEquals('Notizia 1', $childrens[2]->getName('ita-IT'));
-
     $attributes = $childrens[2]->datamap();
     $this->assertEquals(strtotime('today'), $attributes['publish_date']->attribute('data_int'));
     $this->assertEquals(date('m', strtotime('today')), $attributes['publish_date']->content()->month());
@@ -170,13 +166,11 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertEquals(2, $assigned_nodes[2]->attribute('parent_node_id'));
     $this->assertTrue($assigned_nodes[2]->isMain());
 
-
     $menu_top = eZContentObject::fetchByRemoteID('folder_menu_top');
     $this->assertEquals(3, $menu_top->mainNode()->childrenCount());
 
     $menu_left = eZContentObject::fetchByRemoteID('folder_menu_left');
     $this->assertEquals(2, $menu_left->mainNode()->childrenCount());
-
 
     $parameters = array('Language' => 'eng-GB');
     $childrens_count = eZContentObjectTreeNode::subTreeCountByNodeID($parameters, $menu_top->mainNode()->attribute('node_id'));
@@ -284,10 +278,10 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $node = $object->mainNode();
     $url_alias = eZURLAliasML::fetchByAction('eznode', $node->attribute('node_id'));
     $this->assertEquals(count($url_alias), 3);
-    $this->assertEquals($url_alias[0]->attribute('text'), 'an_article');
-    $this->assertEquals($url_alias[1]->attribute('text'), 'alias-1');
-    $this->assertEquals($url_alias[1]->attribute('lang_mask'), 2);
-    $this->assertEquals($url_alias[2]->attribute('text'), 'alias-2');
+    $this->assertEquals('An-article', $url_alias[0]->attribute('text'));
+    $this->assertEquals('alias-1', $url_alias[1]->attribute('text'));
+    $this->assertEquals(2, $url_alias[1]->attribute('lang_mask'));
+    $this->assertEquals('alias-2', $url_alias[2]->attribute('text'));
   }
 
   public function testSwapTo()
@@ -320,4 +314,101 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertTrue(eZContentObject::fetchByRemoteID('folder8') instanceof eZContentObject);
   }
 
+  public function testModifyObjectAfterPublish()
+  {
+    $fixture_objects = dirname(__FILE__) . '/fixtures/modify_object.yml';
+
+    $data = new ezpYamlData();
+    $data->loadObjectsData($fixture_objects);
+    
+    $folder = idObjectRepository::retrieveByRemoteId('folder');
+    
+    $this->assertEquals('Folder after change', (string)$folder->name);
+    $this->assertContains('test english modified', (string)$folder->description);
+    $this->assertEquals('test italiano modificato', (string)$folder->description->ita_IT);
+  }
+
+  public function testImportAllDatatypes()
+  {
+    $fixture = dirname(__FILE__) . '/fixtures/all_datatypes.classes.yml';
+    $objects = dirname(__FILE__) . '/fixtures/all_datatypes.objects.yml';
+
+    $data = new ezpYamlData();
+    $data->loadClassesData($fixture);
+    $data->loadObjectsData($objects);
+
+    $object = idObjectRepository::retrieveByRemoteId('object');
+
+    $this->assertEquals(strtotime('05/31/1979'), (string)$object->ezdate);
+    $this->assertEquals(strtotime('05/31/1979'), (string)$object->ezdate->eng_GB);
+    $this->assertEquals(strtotime('05/31/2000'), (string)$object->ezdate->ita_IT);
+
+    $this->assertEquals(strtotime('05/31/1979 23:15'), (string)$object->ezdatetime);
+    $this->assertEquals(strtotime('05/31/1979 23:15'), (string)$object->ezdatetime->eng_GB);
+    $this->assertEquals(strtotime('05/31/2000 23:15'), (string)$object->ezdatetime->ita_IT);
+
+    $this->assertEquals('pluto@example.com', (string)$object->ezemail);
+    $this->assertEquals('pluto@example.com', (string)$object->ezemail->eng_GB);
+    $this->assertEquals('pluto@example.it', (string)$object->ezemail->ita_IT);
+
+    $this->assertContains('test.gif', (string)$object->ezbinaryfile);
+    $this->assertContains('test.gif', (string)$object->ezbinaryfile->eng_GB);
+    $this->assertContains('test.gif', (string)$object->ezbinaryfile->ita_IT);
+    
+    $this->assertEquals(1, (string)$object->ezboolean);
+    $this->assertEquals(1, (string)$object->ezboolean->eng_GB);
+    $this->assertEquals(0, (string)$object->ezboolean->ita_IT);
+
+    $this->assertContains('pippolone.gif', (string)$object->ezimage);
+    $this->assertContains('pippolone.gif', (string)$object->ezimage->eng_GB);
+    $this->assertContains('pippo.gif', (string)$object->ezimage->ita_IT);
+
+    $this->assertEquals(1234, (string)$object->ezinteger);
+    $this->assertEquals(1234, (string)$object->ezinteger->eng_GB);
+    $this->assertEquals(4321, (string)$object->ezinteger->ita_IT);
+
+    $this->assertEquals('plutonio, paperopoli', (string)$object->ezkeyword);
+    $this->assertEquals('plutonio, paperopoli', (string)$object->ezkeyword->eng_GB);
+    $this->assertEquals('pluto, paperino, pippone', (string)$object->ezkeyword->ita_IT);
+
+    $this->assertEquals("1234.56", (string)$object->ezfloat);
+    $this->assertEquals("1234.56", (string)$object->ezfloat->eng_GB);
+    $this->assertEquals("1234.56", (string)$object->ezfloat->ita_IT);
+
+    $this->assertEquals(1, (string)$object->ezobjectrelation);
+    $this->assertEquals(1, (string)$object->ezobjectrelation->eng_GB);
+    $this->assertEquals(50, (string)$object->ezobjectrelation->ita_IT);
+
+    $this->assertEquals("1-50", (string)$object->ezobjectrelationlist);
+    $this->assertEquals("1-50", (string)$object->ezobjectrelationlist->eng_GB);
+    $this->assertEquals("50-1", (string)$object->ezobjectrelationlist->ita_IT);
+    
+    $this->assertEquals('1', (string)$object->ezselection);
+    $this->assertEquals('1', (string)$object->ezselection->eng_GB);
+    $this->assertEquals('2', (string)$object->ezselection->ita_IT);
+
+    $this->assertEquals('pippolone', (string)$object->ezstring);
+    $this->assertEquals('pippolone', (string)$object->ezstring->eng_GB);
+    $this->assertEquals('pippo', (string)$object->ezstring->ita_IT);
+
+    $this->assertEquals('this is an english text', (string)$object->eztext);
+    $this->assertEquals('this is an english text', (string)$object->eztext->eng_GB);
+    $this->assertEquals('questo è un test in italiano', (string)$object->eztext->ita_IT);
+
+    $this->assertEquals('12:30:0', (string)$object->eztime);
+    $this->assertEquals('12:30:0', (string)$object->eztime->eng_GB);
+    $this->assertEquals('0:30:0', (string)$object->eztime->ita_IT);
+
+    $this->assertEquals('http://www.google.com|Google.com', (string)$object->ezurl);
+    $this->assertEquals('http://www.google.com|Google.com', (string)$object->ezurl->eng_GB);
+    $this->assertEquals('http://www.google.it|Google.it', (string)$object->ezurl->ita_IT);
+    
+    $this->assertEquals('pippo|pippo@example.com|passwd_en|md5_password', (string)$object->ezuser);
+    $this->assertEquals('pippo|pippo@example.com|passwd_en|md5_password', (string)$object->ezuser->eng_GB);
+    $this->assertEquals('pippo|pippo@example.com|passwd_en|md5_password', (string)$object->ezuser->ita_IT);
+    
+    $this->assertContains('<strong>This</strong> is a <emphasize>description</emphasize>', (string)$object->ezxmltext);
+    $this->assertContains('<strong>This</strong> is a <emphasize>description</emphasize>', (string)$object->ezxmltext->eng_GB);
+    $this->assertContains('<strong>Questa</strong> è una <emphasize>descrizione</emphasize>', (string)$object->ezxmltext->ita_IT);
+  }
 }
