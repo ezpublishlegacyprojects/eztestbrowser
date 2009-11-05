@@ -10,7 +10,7 @@ class ezpLoaderTest extends idDatabaseTestCase
 
   public function testeZSelectionDatatyoeOptionsLoad()
   {
-    $fixture = dirname(__FILE__) . '/fixtures/ezselection.yml';
+    $fixture = dirname(__FILE__) . '/../fixtures/ezselection.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($fixture);

@@ -146,21 +146,21 @@ class idObject extends ezpObject
     }
     catch(ezpInvalidObjectAttributeException $e)
     { 
-      $this->object->attribute($name, $value);
+      $this->object->setAttribute($name, $value);
     }
   }
 
-  protected function addVersionIn($newLanguageCode)
+  protected function addVersionIn($new_language_code)
   {
-    eZContentLanguage::fetchByLocale($newLanguageCode, true);
+    eZContentLanguage::fetchByLocale($new_language_code, true);
     $this->refresh();
     $this->object->cleanupInternalDrafts();
 
-    $version = $this->object->createNewVersionIn( $newLanguageCode );
-    $version->setAttribute( 'modified', time() );
-    $version->setAttribute( 'status', eZContentObjectVersion::STATUS_DRAFT );
+    $version = $this->object->createNewVersionIn($new_language_code);
+    $version->setAttribute('modified', time());
+    $version->setAttribute('status', eZContentObjectVersion::STATUS_DRAFT);
     $version->store();
-
+    
     return $version;
   }
 
@@ -183,12 +183,11 @@ class idObject extends ezpObject
     $this->database->begin();
 
     // @TODO: Add generic datatype support here
-
-    foreach ( $translationData as $attr => $value )
+    foreach ($translationData as $attr => $value)
     {
-        if ( $versionDataMap[$attr]->attribute( 'data_type_string') == "ezxmltext" )
+        if ($versionDataMap[$attr]->attribute('data_type_string') == "ezxmltext")
         {
-            $value = idAttribute::processXmlTextData( $value, $versionDataMap[$attr], $this, $this->repository );
+            $value = idAttribute::processXmlTextData($value, $versionDataMap[$attr], $this, $this->repository);
         }
 
         $versionDataMap[$attr]->fromString($value);
@@ -197,6 +196,12 @@ class idObject extends ezpObject
 
     $this->database->commit();
 
+    $this->updateName($version, $newLanguageCode);
+    $this->publishContentObject($this->object, $version);
+  }
+
+  protected function updateName($version, $newLanguageCode)
+  {
     //Update the content object name
     $this->database->begin();
     $this->object->setName( $this->class->contentObjectName( $this->object,
@@ -204,10 +209,6 @@ class idObject extends ezpObject
                                                              $newLanguageCode ),
                             $version->attribute( 'version' ), $newLanguageCode );
     $this->database->commit();
-
-
-    // Finally publish object
-    self::publishContentObject( $this->object, $version );
   }
 
   /*

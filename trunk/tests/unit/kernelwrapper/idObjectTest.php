@@ -1,6 +1,6 @@
 <?php
 
-class idObjectTest extends ezpDatabaseTestCase
+class idObjectTest extends idDatabaseTestCase
 {
   public function testAttributeLanguage()
   {

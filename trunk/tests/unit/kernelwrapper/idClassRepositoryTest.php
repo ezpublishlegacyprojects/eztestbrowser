@@ -1,6 +1,6 @@
 <?php
 
-class idClassRepositoryTest extends ezpDatabaseTestCase
+class idClassRepositoryTest extends idDatabaseTestCase
 {
   public function testAddAttribute()
   {

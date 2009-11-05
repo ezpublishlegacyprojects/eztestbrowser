@@ -1,6 +1,6 @@
 <?php
 
-class idAttributeTest extends PHPUnit_Framework_TestCase
+class idAttributeTest extends idDatabaseTestCase
 {
   public function testCleanImagePath()
   {

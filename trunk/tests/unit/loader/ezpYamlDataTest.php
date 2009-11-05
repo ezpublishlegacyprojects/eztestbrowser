@@ -10,7 +10,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadObjectsData()
   {
-    $fixture = dirname(__FILE__) . '/fixtures/objects.yml';
+    $fixture = dirname(__FILE__) . '/../fixtures/objects.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($fixture);
@@ -32,7 +32,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadClassesData()
   {
-    $fixture = dirname(__FILE__) . '/fixtures/classes.yml';
+    $fixture = dirname(__FILE__) . '/../fixtures/classes.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($fixture);
@@ -70,8 +70,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadNodeTreeData()
   {
-    $classes = dirname(__FILE__) . '/fixtures/classes.yml';
-    $objects = dirname(__FILE__) . '/fixtures/tree.yml';
+    $classes = dirname(__FILE__) . '/../fixtures/classes.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/tree.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($classes);
@@ -106,7 +106,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadRelatedObjectData()
   {
-    $objects = dirname(__FILE__) . '/fixtures/related_object.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/related_object.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -120,7 +120,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadContentRootData()
   {
-    $objects = dirname(__FILE__) . '/fixtures/content_root.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/content_root.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -138,7 +138,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadMultipleLocationDataExceptions()
   {
-    $objects = dirname(__FILE__) . '/fixtures/multiple_locations_exceptions2.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/multiple_locations_exceptions2.yml';
     
     try
     {
@@ -152,7 +152,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadMultipleLocationData()
   {
-    $objects = dirname(__FILE__) . '/fixtures/multiple_locations.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/multiple_locations.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -183,7 +183,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadPriorityData()
   {
-    $objects = dirname(__FILE__) . '/fixtures/priority.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/priority.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -198,7 +198,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadRelatedObjects()
   {
-    $objects = dirname(__FILE__) . '/fixtures/related.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/related.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -211,7 +211,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testOrderedLoader()
   {
-    $objects = dirname(__FILE__) . '/fixtures/ordered_loader.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/ordered_loader.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -225,8 +225,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadObjectRelationList()
   {
-    $classes = dirname(__FILE__) . '/fixtures/classes.yml';
-    $objects = dirname(__FILE__) . '/fixtures/objectrelationlist.yml';
+    $classes = dirname(__FILE__) . '/../fixtures/classes.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/objectrelationlist.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($classes);
@@ -244,7 +244,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testLoadXMLText()
   {
-    $objects = dirname(__FILE__) . '/fixtures/xmltext.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/xmltext.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -257,7 +257,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testAddLocation()
   {
-    $objects = dirname(__FILE__) . '/fixtures/addlocation.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/addlocation.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -269,7 +269,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testAddUrlAlias()
   {
-    $objects = dirname(__FILE__) . '/fixtures/addurlalias.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/addurlalias.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($objects);
@@ -286,8 +286,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testSwapTo()
   {
-    $fixture = dirname(__FILE__) . '/fixtures/classes.yml';
-    $objects = dirname(__FILE__) . '/fixtures/swap.yml';
+    $fixture = dirname(__FILE__) . '/../fixtures/classes.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/swap.yml';
     $data = new ezpYamlData();
     $data->loadClassesData($fixture);
     $data->loadObjectsData($objects);
@@ -299,7 +299,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testClassIdentifierAlias()
   {
-    $fixture_objects = dirname(__FILE__) . '/fixtures/multiple_objects.yml';
+    $fixture_objects = dirname(__FILE__) . '/../fixtures/multiple_objects.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($fixture_objects);
@@ -316,7 +316,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testModifyObjectAfterPublish()
   {
-    $fixture_objects = dirname(__FILE__) . '/fixtures/modify_object.yml';
+    $fixture_objects = dirname(__FILE__) . '/../fixtures/modify_object.yml';
 
     $data = new ezpYamlData();
     $data->loadObjectsData($fixture_objects);
@@ -330,8 +330,8 @@ class ezpYamlDataTest extends idDatabaseTestCase
 
   public function testImportAllDatatypes()
   {
-    $fixture = dirname(__FILE__) . '/fixtures/all_datatypes.classes.yml';
-    $objects = dirname(__FILE__) . '/fixtures/all_datatypes.objects.yml';
+    $fixture = dirname(__FILE__) . '/../fixtures/all_datatypes.classes.yml';
+    $objects = dirname(__FILE__) . '/../fixtures/all_datatypes.objects.yml';
 
     $data = new ezpYamlData();
     $data->loadClassesData($fixture);

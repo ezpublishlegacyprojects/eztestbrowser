@@ -21,8 +21,7 @@ class eZTestBrowserTestSuite extends ezpTestSuite
     
     $this->addTestSuite('idObjectRepositoryTest');
     $this->addTestSuite('idClassRepositoryTest');
-    $this->addTestSuite('idObjectTest');
-    $this->addTestSuite('idImportTest');
+    $this->addTestSuite('idObjectTest');    
     $this->addTestSuite('idAttributeTest');
   }
   

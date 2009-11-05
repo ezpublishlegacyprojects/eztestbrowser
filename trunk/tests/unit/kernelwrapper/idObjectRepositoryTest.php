@@ -7,7 +7,7 @@
  * @package tests
  */
 
-class idObjectRepositoryTest extends ezpDatabaseTestCase
+class idObjectRepositoryTest extends idDatabaseTestCase
 {
   protected $backupGlobals = false;
 
