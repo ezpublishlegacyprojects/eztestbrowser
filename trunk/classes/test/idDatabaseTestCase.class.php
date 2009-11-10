@@ -35,10 +35,14 @@ class idDatabaseTestCase extends ezpDatabaseTestCase
       $this->sharedFixture = ezpTestDatabaseHelper::create($dsn);
 
       if ($this->insertDefaultData === true)
+      {
         ezpTestDatabaseHelper::insertDefaultData($this->sharedFixture);
+      }
 
       if (count($this->sqlFiles) > 0)
+      {
         ezpTestDatabaseHelper::insertSqlData($this->sharedFixture, $this->sqlFiles);
+      }
     }
     eZDB::setInstance($this->sharedFixture);
   }

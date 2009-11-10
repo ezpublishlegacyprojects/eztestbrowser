@@ -66,6 +66,11 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   {
     return hash('md5', $this->fixtures_classes.$this->fixtures_objects);
   }
+
+  private function checkLoadDatabase()
+  {
+    return (bool)($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()));
+  }
   
   /**
    * Sets up the database enviroment
@@ -74,7 +79,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   {
     $this->fixturesSetUp();
     
-    if($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()))
+    if($this->checkLoadDatabase())
     {
       $this->initialize();
       $this->insertSql();
@@ -82,11 +87,6 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
       $data = new ezpYamlData($this->verbose);
       $data->loadClassesData(realpath($this->fixtures_classes));
       $data->loadObjectsData(realpath($this->fixtures_objects));
-    }
-
-    if (!$this->sharedFixture)
-    {
-      $this->sharedFixture = ezpDatabaseHelper::useDatabase(ezpTestRunner::dsn());
     }
     
     eZDB::setInstance($this->sharedFixture);
