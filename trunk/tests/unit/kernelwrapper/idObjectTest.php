@@ -61,6 +61,79 @@ class idObjectTest extends idDatabaseTestCase
     //$this->assertEquals("’ • è é ì ò à ù è à", $object->body->__toString());
 
   }
+
+
+  public function testEmptyTranslationEnglish()
+  {
+    $object = new idObject('article', 2);
+    $object->title->eng_GB = 'New article test';
+
+    $this->assertEquals($object->title->eng_GB->__toString(), 'New article test');
+
+    try
+    {
+      $object->title->ita_IT->__toString();
+    }
+    catch(Exception $e)
+    {
+      return;
+    }
+
+    $this->fail('the translation does not rise an exception');
+  }
+
+  public function testEmptyTranslationItalian()
+  {
+    eZContentLanguage::fetchByLocale('ita-IT', true);
+
+    $object = new idObject('article', 2);
+    $object->title->ita_IT = 'nuovo articolo test';
+print_r($object->title->geteZContentObjectAttribute());
+    $this->assertEquals($object->title->ita_IT->__toString(), 'nuovo articolo test');
+
+    try
+    {
+      $object->title->eng_GB->__toString();
+    }
+    catch(Exception $e)
+    {
+      return;
+    }
+
+    $this->fail('the translation does not rise an exception');
+  }
+
+
+  public function testRemoteId()
+  {
+    eZContentLanguage::fetchByLocale('ita-IT', true);
+
+    $object = new idObject('article', 2);
+    $object->title->ita_IT = 'nuovo articolo test';
+    $object->remote_id = 'nuovoarticolotest';
+
+    $object->store();
+    $object->publish();
+
+    $this->AssertEquals($object->remote_id, 'nuovoarticolotest');
+
+  }
+
+  public function testSetAttributeRemoteId()
+  {
+    eZContentLanguage::fetchByLocale('ita-IT', true);
+
+    $object = new idObject('article', 2);
+    $object->title->ita_IT = 'nuovo articolo test';
+    $object->setAttribute('remote_id', 'nuovo_articolo_test');
+
+    $object->store();
+    $object->publish();
+
+    $this->AssertEquals($object->remote_id, 'nuovo_articolo_test');
+
+  }
+
 }
 
 ?>
