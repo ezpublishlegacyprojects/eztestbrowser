@@ -10,6 +10,33 @@ class ezpLoader
   protected $object_ids = array();
   protected $content_object_ids = array();
   protected $object_parameters;
+  protected $errors;
+
+  public function setErrors($errors, $name = 'general')
+  {
+    if (count($errors))
+    {
+      $this->errors[$name] = $errors;
+    }
+  }
+
+  public function addError($error, $name = 'general')
+  {
+    $this->errors[$name][] = $error;
+  }
+
+  public function getErrors()
+  {
+    return $this->errors;
+  }
+
+  public function checkErrors()
+  {
+    if (count($this->errors) > 0)
+    {
+      throw new Exception("Some errors occurred\n".print_r($this->errors, true));
+    }
+  }
 
   protected function setContentObjectMap($object)
   {
@@ -396,7 +423,6 @@ class ezpLoader
 
     return true;
   }
-
 }
 
 function remoteIdToId(&$value, $name, $parameters)

@@ -23,7 +23,7 @@
 class idObject extends ezpObject
 {
   protected $repository = null;
-  protected $parser_errors = array();
+  protected $errors = array();
   protected $database;
   protected $class;
   protected $mainNode;
@@ -252,14 +252,22 @@ class idObject extends ezpObject
     $this->publish();
   }
 
-  public function setParserError($parser_errors, $name)
+  public function setParserError($errors, $name)
   {
-    $this->parser_errors[$name] = $parser_errors;
+    if (count($errors) > 0)
+    {
+      $this->errors[$name] = $errors;
+    }
   }
 
+  public function countErrors()
+  {
+    return count($this->errors);
+  }
+  
   public function getParserError()
   {
-    return $this->parser_errors;
+    return $this->errors;
   }
 
   public function getObject()
