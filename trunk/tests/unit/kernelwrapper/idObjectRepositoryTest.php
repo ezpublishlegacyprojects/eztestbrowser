@@ -11,6 +11,18 @@ class idObjectRepositoryTest extends idDatabaseTestCase
 {
   protected $backupGlobals = false;
 
+  private function buildFolder($name, $remote_id = 'folder')
+  {
+    $folder = new idObject("folder", 2);
+    $folder->name = $name;
+    $folder->short_description = "123";
+    $folder->setAttribute('remote_id', $remote_id);
+    $folder->store();
+    $folder->publish();
+
+    return $folder;
+  }
+
   public function __construct()
   {
     parent::__construct();
@@ -19,12 +31,7 @@ class idObjectRepositoryTest extends idDatabaseTestCase
 
   public function testRetrieveObject()
   {
-    $folder = new idObject("folder", 2);
-    $folder->name = __FUNCTION__;
-    $folder->short_description = "123";
-    $folder->setAttribute('remote_id', 'folder');
-    $folder->store();
-    $folder->publish();    
+    $folder = $this->buildFolder(__FUNCTION__);
 
     $object = idObjectRepository::retrieveById($folder->id);
 
@@ -43,6 +50,14 @@ class idObjectRepositoryTest extends idDatabaseTestCase
     $this->assertTrue($object instanceof idObject);
     $this->assertTrue($object->id == $folder->id);
     $this->assertEquals((string)$object->name, __FUNCTION__);
+  }
+
+  public function testRetrieveByClassIdentifier()
+  {
+    $objects = idObjectRepository::retrieveByClassIdentifier('folder');
+
+    $this->assertEquals('eZ Publish', $objects[0]['name']);
+    $this->assertEquals('7', count($objects));
   }
 }
 

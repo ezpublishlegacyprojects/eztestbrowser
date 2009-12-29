@@ -134,6 +134,11 @@ print_r($object->title->geteZContentObjectAttribute());
 
   }
 
+  public function testToArray()
+  {
+    
+  }
+
 }
 
 ?>

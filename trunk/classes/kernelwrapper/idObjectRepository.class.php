@@ -56,7 +56,7 @@ class idObjectRepository
   }
 
   /**
-   * Proxy method to eZContentObject::fetchByRemoteI
+   * Proxy method to eZContentObject::fetchByRemoteId
    *
    * @param string $remote_id
    * @return idObject
@@ -66,6 +66,20 @@ class idObjectRepository
     $object = new idObject();
     $object->fromeZContentObject(eZContentObject::fetchByRemoteID($remote_id));
     return $object;
+  }
+
+  /**
+   * Retrieve object list of same class for a date range
+   *
+   * @param string $class_identifier
+   * @param string $date_start
+   * @param string $date_stop
+   * @return array
+   */
+  public static function retrieveByClassIdentifier($class_identifier, $conditions = array())
+  {
+    $class = eZContentClass::fetchByIdentifier($class_identifier, false);
+    return eZContentObject::fetchFilteredList($conditions, false, false, false);
   }
 
   /**
