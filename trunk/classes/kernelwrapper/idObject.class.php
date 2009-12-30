@@ -272,6 +272,11 @@ class idObject extends ezpObject
 
   public function getObject()
   {
-      return $this->object;
-    }
+    return $this->object;
+  }
+
+  public function getClass()
+  {
+    return $this->class;
+  }
 }

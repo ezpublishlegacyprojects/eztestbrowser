@@ -88,7 +88,7 @@ class idObjectTest extends idDatabaseTestCase
 
     $object = new idObject('article', 2);
     $object->title->ita_IT = 'nuovo articolo test';
-print_r($object->title->geteZContentObjectAttribute());
+    // print_r($object->title->geteZContentObjectAttribute());
     $this->assertEquals($object->title->ita_IT->__toString(), 'nuovo articolo test');
 
     try
@@ -131,12 +131,6 @@ print_r($object->title->geteZContentObjectAttribute());
     $object->publish();
 
     $this->AssertEquals($object->remote_id, 'nuovo_articolo_test');
-
-  }
-
-  public function testToArray()
-  {
-    
   }
 
 }
