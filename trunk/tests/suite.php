@@ -23,6 +23,8 @@ class eZTestBrowserTestSuite extends ezpTestSuite
     $this->addTestSuite('idClassRepositoryTest');
     $this->addTestSuite('idObjectTest');    
     $this->addTestSuite('idAttributeTest');
+
+    $this->addTestSuite('idTestRunnerTest');
   }
   
   public static function suite()
