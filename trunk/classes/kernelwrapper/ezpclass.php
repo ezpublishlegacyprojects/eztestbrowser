@@ -173,6 +173,16 @@ class ezpClass
           $attribute->setAttribute('is_information_collector', $attribute_data['is_information_collector']);
         }
 
+        if (isset($attribute_data['data_text2']))
+        {
+          $attribute->setAttribute('data_text2', $attribute_data['data_text2']);
+        }
+
+        if (isset($attribute_data['data_text4']))
+        {
+          $attribute->setAttribute('data_text4', $attribute_data['data_text4']);
+        }
+
         if (isset($attribute_data['options']) && $attribute_data['type'] == 'ezselection')
         {
           // Serialize XML
