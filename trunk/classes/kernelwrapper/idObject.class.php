@@ -25,16 +25,16 @@ class idObject extends ezpObject
   protected $repository = null;
   protected $errors = array();
   protected $database;
-  protected $class;
-  protected $mainNode;
-  protected $nodes = array();
+//  protected $class;
+//  protected $mainNode;
+//  protected $nodes = array();
 
   public $object;
   
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
   {
     $this->database = eZDB::instance();
-    
+
     if ($classIdentifier)
     {
       $this->class = eZContentClass::fetchByIdentifier($classIdentifier);

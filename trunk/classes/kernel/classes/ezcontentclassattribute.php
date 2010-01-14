@@ -5,8 +5,8 @@
 // Created on: <16-Apr-2002 11:08:14 amos>
 //
 // SOFTWARE NAME: eZ Publish
-// SOFTWARE RELEASE: 4.1.3
-// BUILD VERSION: 23650
+// SOFTWARE RELEASE: 4.2.0
+// BUILD VERSION: 24182
 // COPYRIGHT NOTICE: Copyright (C) 1999-2009 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2.0
 // NOTICE: >
@@ -52,7 +52,7 @@ class eZContentClassAttribute extends eZPersistentObject
 
     static function definition()
     {
-        return array( 'fields' => array( 'id' => array( 'name' => 'ID',
+        static $definition = array( 'fields' => array( 'id' => array( 'name' => 'ID',
                                                         'datatype' => 'integer',
                                                         'default' => 0,
                                                         'required' => true ),
@@ -163,6 +163,7 @@ class eZContentClassAttribute extends eZPersistentObject
                       'sort' => array( 'placement' => 'asc' ),
                       'class_name' => 'eZContentClassAttribute',
                       'name' => 'ezcontentclass_attribute' );
+        return $definition;
     }
 
     function __clone()
@@ -241,12 +242,7 @@ class eZContentClassAttribute extends eZPersistentObject
             return false;
         }
 
-        global $eZContentClassAttributeCacheListFull;
-        unset( $eZContentClassAttributeCacheListFull );
-        global $eZContentClassAttributeCacheList;
-        unset( $eZContentClassAttributeCacheList[$this->attribute( 'contentclass_id' )] );
-        global $eZContentClassAttributeCache;
-        unset( $eZContentClassAttributeCache[$this->ID] );
+        self::expireCache( $this->ID, $this->attribute( 'contentclass_id' ) );
 
         $dataType->preStoreClassAttribute( $this, $this->attribute( 'version' ) );
 
@@ -273,12 +269,7 @@ class eZContentClassAttribute extends eZPersistentObject
             return false;
         }
 
-        global $eZContentClassAttributeCacheListFull;
-        unset( $eZContentClassAttributeCacheListFull );
-        global $eZContentClassAttributeCacheList;
-        unset( $eZContentClassAttributeCacheList[$this->attribute( 'contentclass_id' )] );
-        global $eZContentClassAttributeCache;
-        unset( $eZContentClassAttributeCache[$this->ID] );
+        self::expireCache( $this->ID, $this->attribute( 'contentclass_id' ) );
 
         $db = eZDB::instance();
         $db->begin();
@@ -305,12 +296,7 @@ class eZContentClassAttribute extends eZPersistentObject
         $dataType = $this->dataType();
         if ( $dataType->isClassAttributeRemovable( $this ) )
         {
-            global $eZContentClassAttributeCacheListFull;
-            unset( $eZContentClassAttributeCacheListFull );
-            global $eZContentClassAttributeCacheList;
-            unset( $eZContentClassAttributeCacheList[$this->attribute( 'contentclass_id' )] );
-            global $eZContentClassAttributeCache;
-            unset( $eZContentClassAttributeCache[$this->ID] );
+            self::expireCache( $this->ID, $this->attribute( 'contentclass_id' ) );
 
             $db = eZDB::instance();
             $db->begin();
@@ -719,8 +705,6 @@ class eZContentClassAttribute extends eZPersistentObject
             return false;
     }
 
-    static $identifierHash = null;
-    
     public static function resetClassAttributeIdentifierHash()
     {
       self::$identifierHash = null;
@@ -847,6 +831,50 @@ class eZContentClassAttribute extends eZPersistentObject
         }
     }
 
+    /**
+     * Clears all content class attribute related caches
+     *
+     * @param int $contentClassAttributeID Specific attribute ID to clear cache for
+     * @param int $contentClassID Specific attribute ID to clear cache for
+     *
+     * @return void
+     * @since 4.2
+     **/
+    public static function expireCache( $contentClassAttributeID = false, $contentClassID = false)
+    {
+        unset( $GLOBALS['eZContentClassAttributeCacheListFull'] );
+        if ( $contentClassID !== false )
+        {
+            if ( isset( $GLOBALS['eZContentClassAttributeCacheList'][$contentClassID] ) )
+            {
+                unset( $GLOBALS['eZContentClassAttributeCacheList'][$contentClassID] );
+            }
+        }
+        else
+        {
+            unset( $GLOBALS['eZContentClassAttributeCacheList'] );
+        }
+        if ( $contentClassAttributeID !== false )
+        {
+            if ( isset( $GLOBALS['eZContentClassAttributeCache'][$contentClassAttributeID] ) )
+            {
+                unset( $GLOBALS['eZContentClassAttributeCache'][$contentClassAttributeID] );
+            }
+        }
+        else
+        {
+            unset( $GLOBALS['eZContentClassAttributeCache'] );
+        }
+
+        // expire cache file by timestamp
+        $handler = eZExpiryHandler::instance();
+        $handler->setTimestamp( 'class-identifier-cache', time() + 1 );
+        $handler->store();
+
+        // expire local, in-memory cache
+        self::$identifierHash = null;
+    }
+
     /// \privatesection
     /// Contains the content for this attribute
     public $Content;
@@ -866,6 +894,11 @@ class eZContentClassAttribute extends eZPersistentObject
     public $IsRequired;
     public $IsInformationCollector;
     public $Module;
+
+    /**
+     * In-memory cache for class attributes identifiers / id matching
+     **/
+    private static $identifierHash = null;
 }
 
 ?>
