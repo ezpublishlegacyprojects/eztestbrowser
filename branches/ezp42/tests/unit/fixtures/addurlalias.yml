@@ -1,0 +1,10 @@
+Article:
+  article:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      title: An article
+      intro: description of an article
+    url_alias:
+      alias1 : { value: alias-1, parent: 2}
+      alias2 : { value: alias-2, parent: 2}
