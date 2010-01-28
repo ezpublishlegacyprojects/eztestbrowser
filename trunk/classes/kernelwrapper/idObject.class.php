@@ -25,9 +25,9 @@ class idObject extends ezpObject
   protected $repository = null;
   protected $errors = array();
   protected $database;
-//  protected $class;
-//  protected $mainNode;
-//  protected $nodes = array();
+  protected $class;
+  protected $mainNode;
+  protected $nodes = array();
 
   public $object;
   

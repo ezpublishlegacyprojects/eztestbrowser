@@ -70,9 +70,4 @@ class idWebBrowser extends sfWebBrowser
   {
     return $this->urlInfo;
   }
-
-  public function getFields()
-  {
-    return $this->fields;
-  }
 }
