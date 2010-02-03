@@ -83,6 +83,11 @@ class idObject extends ezpObject
 
   public function hydrate($attributes, $only_data_map = false)
   {
+    if (empty($attributes))
+    {
+      return;
+    }
+
     foreach ($attributes as $name => $value)
     {
       if($this->object->hasAttribute($name) && !$only_data_map)

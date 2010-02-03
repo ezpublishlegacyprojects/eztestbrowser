@@ -320,7 +320,10 @@ class ezpLoader
 
   public function remoteIdToId($object, &$attributes)
   {
-    array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
+    if (!empty($attributes))
+    {
+      array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
+    }
   }
 
   public function swapNodes($source_node_id, $destination_node_id)
