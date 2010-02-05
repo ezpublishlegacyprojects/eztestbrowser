@@ -59,6 +59,18 @@ class idObjectRepositoryTest extends idDatabaseTestCase
     $this->assertEquals('eZ Publish', $objects[0]['name']);
     $this->assertEquals('7', count($objects));
   }
+
+  public function testRetrieveByTextAttribute()
+  {
+    $folder = new idObject("folder", 2);
+    $folder->name = 'example';
+    $folder->short_description = "123example";
+    $folder->store();
+    $folder->publish();
+    
+    $object = idObjectRepository::retrieveByTextAttribute('folder', 'folder/name', "example");
+    $this->assertEquals('example', (string)$object->name);
+  }
 }
 
 ?>
