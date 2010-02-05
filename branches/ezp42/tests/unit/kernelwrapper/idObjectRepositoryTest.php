@@ -62,14 +62,43 @@ class idObjectRepositoryTest extends idDatabaseTestCase
 
   public function testRetrieveByTextAttribute()
   {
+    $fixture = dirname(__FILE__) . '/../fixtures/classes.yml';
+    $data = new ezpYamlData();
+    $data->loadClassesData($fixture);
+    
     $folder = new idObject("folder", 2);
     $folder->name = 'example';
     $folder->short_description = "123example";
     $folder->store();
     $folder->publish();
-    
+
     $object = idObjectRepository::retrieveByTextAttribute('folder', 'folder/name', "example");
     $this->assertEquals('example', (string)$object->name);
+
+    $FrontPage = new idObject("FrontPage", 2);
+    $FrontPage->name = 'front page search attribute';
+    $FrontPage->banner_link = 'front_page_url';
+    $FrontPage->store();
+    $FrontPage->publish();
+
+    $new_object = idObjectRepository::retrieveByTextAttribute('FrontPage', 'FrontPage/banner_link', "front_page_url");
+    $this->assertEquals('front page search attribute', (string)$new_object->name);
+  }
+
+  public function testRetrieveByTextAttributeCustomField()
+  {
+    $fixture = dirname(__FILE__) . '/../fixtures/classes.yml';
+    $data = new ezpYamlData();
+    $data->loadClassesData($fixture);
+
+    $FrontPage = new idObject("FrontPage", 2);
+    $FrontPage->name = 'front page search attribute';
+    $FrontPage->banner_link = 'front_page_url';
+    $FrontPage->store();
+    $FrontPage->publish();
+
+    $new_object = idObjectRepository::retrieveByTextAttribute('frontpage', 'frontpage/banner_link', "front_page_url");
+    $this->assertEquals('front page search attribute', (string)$new_object->name);
   }
 }
 

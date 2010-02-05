@@ -111,7 +111,7 @@ class idObjectRepository
    * @param mixed $value
    * @return mixed 
    */
-  public function retrieveByTextAttribute($class_identifier, $attribute_identifier, $value, $parentnode_id = 2)
+  public static function retrieveByTextAttribute($class_identifier, $attribute_identifier, $value, $parentnode_id = 2)
   {
     $class_id = eZContentClass::classIDByIdentifier($class_identifier);
     $results_array = eZContentFunctionCollection::fetchObjectTree( $parentnode_id, false, false, false, 0, 1, 4, false, $class_id,
