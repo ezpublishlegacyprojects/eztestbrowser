@@ -170,6 +170,10 @@ class idAttribute
   {
     switch($this->attribute->attribute('data_type_string'))
     {
+      case 'ezsimpleselection':
+          $this->attribute->setAttribute('data_text', $value);
+          $this->attribute->store();
+        break;
       case 'ezxmltext':
         $this->attribute->fromString(idAttribute::processXmlTextData($value, $this->attribute, $this->object, $this->object->repository));
         break;

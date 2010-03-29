@@ -4,6 +4,13 @@ require_once dirname(__FILE__).'/Vendor/sfWebBrowser/lib/sfWebBrowser.class.php'
 
 class idWebBrowser extends sfWebBrowser
 {
+  protected $debug = false;
+
+  public function setDebug($debug)
+  {
+    $this->debug = (bool)$debug;
+  }
+
   public function call($uri, $method = 'GET', $parameters = array(), $headers = array(), $changeStack = true)
   {
     $urlInfo = parse_url($uri);
@@ -37,6 +44,15 @@ class idWebBrowser extends sfWebBrowser
     if ($changeStack)
     {
       $this->addToStack($uri, $method, $parameters, $headers);
+    }
+
+    if ($this->debug)
+    {
+      echo "Calling adapter: \n";
+      echo $uri."\n";
+      echo $method."\n";
+      print_r($parameters);
+      print_r($headers);
     }
 
     $browser = $this->adapter->call($this, $uri, $method, $parameters, $headers);
