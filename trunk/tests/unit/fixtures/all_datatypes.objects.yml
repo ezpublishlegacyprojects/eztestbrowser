@@ -17,7 +17,7 @@ AllDatatypesClass:
       ezselection: 1
       ezstring: pippolone
       eztext: this is an english text
-      eztime: "12:30"
+      eztime: "12:30:00"
       ezurl: http://www.google.com|Google.com
       ezuser: pippo|pippo@example.com|passwd_en
       ezxmltext: >
@@ -38,7 +38,7 @@ AllDatatypesClass:
         ezselection: 2
         ezstring: pippo
         eztext: questo è un test in italiano
-        eztime: "00:30"
+        eztime: "00:30:00"
         ezurl: http://www.google.it|Google.it
         ezuser: pippo|pippo@example.it|passwd_it
         ezxmltext: >

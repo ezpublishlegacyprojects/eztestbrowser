@@ -86,6 +86,8 @@ class idObject extends ezpObject
 
   public function hydrate($attributes, $only_data_map = false)
   {
+    if (!is_array($attributes)) return;
+
     foreach ($attributes as $name => $value)
     {
       if($this->object->hasAttribute($name) && !$only_data_map)
@@ -248,8 +250,7 @@ class idObject extends ezpObject
 
   public function addLanguage($language_code)
   {
-    $this->addTranslation($language_code);
-    $this->publish();
+    $this->addTranslation($language_code);    
   }
 
   public function setParserError($errors, $name)

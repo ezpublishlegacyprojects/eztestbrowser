@@ -221,7 +221,11 @@ class ezpClass
      */
     public function __call($name, $arguments)
     {
-      return call_user_func_array(array($this->class, $name), $arguments);
+      if (method_exists($this->class, $name))
+      {
+        return call_user_func_array(array($this->class, $name), $arguments);
+      }
+      return false;
     }
 
     /**
@@ -264,7 +268,10 @@ class ezpClass
       {
         eZContentLanguage::fetchByLocale($language_code, true);
         $this->setName($language_data['name'], $language_code);
-        $this->addAttributesTranslationsFromArray($language_data['attributes'], $language_code);
+        if (isset($language_data['attributes']))
+        {
+          $this->addAttributesTranslationsFromArray($language_data['attributes'], $language_code);
+        }
       }
     }
 
