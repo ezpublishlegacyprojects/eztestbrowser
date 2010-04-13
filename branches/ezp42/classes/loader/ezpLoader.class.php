@@ -320,7 +320,7 @@ class ezpLoader
 
   public function remoteIdToId($object, &$attributes)
   {
-    if (!empty($attributes))
+    if(is_array($attributes))
     {
       array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
     }
