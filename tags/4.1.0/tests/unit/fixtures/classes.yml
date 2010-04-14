@@ -1,0 +1,60 @@
+News:
+  object_name:          <title>
+  is_container:         true
+  attributes:
+    title:
+      name:             Title
+      type:             ezstring
+      is_required:      true
+      is_information_collector: true
+    teaser:
+      name:             Teaser
+      type:             ezxmltext
+      is_required:      true
+    body:
+      name:             Body
+      type:             ezxmltext
+      is_required:      false
+    publish_date:
+      name:             Publication date  
+      type:             ezdate
+    date:
+      name:             Publication date  
+      type:             ezdate
+      can_translate:    false
+  translations:
+    ita-IT:
+      name:             Notizia
+      attributes:
+        title:          Titolo
+        teaser:         Intro
+        body:           Corpo
+        publish_date:   Data di pubblicazione
+        date:           Data
+        
+Related:  
+  object_name:          <title>
+  attributes:
+    title:
+      name:             Title
+      type:             ezstring      
+    images:
+      name:             Images
+      type:             ezobjectrelationlist
+
+FrontPage:
+  object_name:    <name>
+  is_container:   true
+  attributes:
+    name:         { name: Name, type: ezstring}
+    banner:       { name: Banner, type: ezimage }
+    banner_link:  { name: Banner link, type: ezstring}
+    description:        { name: Description, type: ezxmltext }
+  translations:
+    ita-IT:
+      name:                 Pagina principale
+      attributes:
+        name:               Nome
+        banner:             Banner
+        banner_link:        Banner link
+        description:        Descrizione

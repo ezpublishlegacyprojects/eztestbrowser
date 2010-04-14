@@ -1,0 +1,45 @@
+AllDatatypesClass:
+  object:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      ezdate: <?php echo strtotime('05/31/1979').PHP_EOL; ?>
+      ezdatetime: <?php echo strtotime('05/31/1979 23:15').PHP_EOL; ?>
+      ezemail: "pluto@example.com"
+      ezbinaryfile: "<?php echo dirname(__FILE__).'/images/test.gif' ?>"
+      ezboolean: 1
+      ezfloat: 1234.56
+      ezimage: "<?php echo dirname(__FILE__).'/images/test.gif' ?>"
+      ezinteger: 1234
+      ezkeyword: plutonio,paperopoli
+      ezobjectrelation: 1
+      ezobjectrelationlist: 1-50
+      ezselection: 1
+      ezstring: pippolone
+      eztext: this is an english text
+      eztime: "12:30:00"
+      ezurl: http://www.google.com|Google.com
+      ezuser: pippo|pippo@example.com|passwd_en
+      ezxmltext: >
+        <p><strong>This</strong> is a <em>description</em></p>
+    translations:
+      ita-IT:
+        ezdate: <?php echo strtotime('05/31/2000').PHP_EOL; ?>
+        ezdatetime: <?php echo strtotime('05/31/2000 23:15').PHP_EOL; ?>
+        ezemail: "pluto@example.it"
+        ezbinaryfile: "<?php echo dirname(__FILE__).'/images/test.gif' ?>"
+        ezboolean: 0
+        ezfloat: 1234.56
+        ezimage: "<?php echo dirname(__FILE__).'/images/test.gif' ?>"
+        ezinteger: 4321
+        ezkeyword: pluto,paperino,pippone
+        ezobjectrelation: 50
+        ezobjectrelationlist: 50-1
+        ezselection: 2
+        ezstring: pippo
+        eztext: questo è un test in italiano
+        eztime: "00:30:00"
+        ezurl: http://www.google.it|Google.it
+        ezuser: pippo|pippo@example.it|passwd_it
+        ezxmltext: >
+          <p><strong>Questa</strong> è una <em>descrizione</em></p>

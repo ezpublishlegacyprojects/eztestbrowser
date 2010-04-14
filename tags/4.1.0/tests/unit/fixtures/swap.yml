@@ -1,0 +1,22 @@
+Folder:
+  folder_custom:
+    swap_with: 2
+    locations:
+      main: { parent_node_id: 2}
+    attributes:
+      name: Custom
+    translations:
+      ita-IT:
+        name: Custom
+
+FrontPage:
+  homepage:
+    swap_with: 2
+    locations:
+      main: { parent_node_id: 2}
+    attributes:
+      name: Planetek
+      short_name: Home
+      short_description: ''
+      show_children: false
+      description: bla bla
