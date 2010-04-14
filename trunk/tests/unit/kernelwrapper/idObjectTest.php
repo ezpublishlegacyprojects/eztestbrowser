@@ -65,6 +65,8 @@ class idObjectTest extends idDatabaseTestCase
 
   public function testEmptyTranslationEnglish()
   {
+    $this->markTestSkipped('Da implementare');
+
     $object = new idObject('article', 2);
     $object->title->eng_GB = 'New article test';
 
@@ -84,11 +86,13 @@ class idObjectTest extends idDatabaseTestCase
 
   public function testEmptyTranslationItalian()
   {
+    $this->markTestSkipped('Da implementare');
+    
     eZContentLanguage::fetchByLocale('ita-IT', true);
 
     $object = new idObject('article', 2);
     $object->title->ita_IT = 'nuovo articolo test';
-    // print_r($object->title->geteZContentObjectAttribute());
+    
     $this->assertEquals($object->title->ita_IT->__toString(), 'nuovo articolo test');
 
     try
@@ -135,4 +139,3 @@ class idObjectTest extends idDatabaseTestCase
 
 }
 
-?>

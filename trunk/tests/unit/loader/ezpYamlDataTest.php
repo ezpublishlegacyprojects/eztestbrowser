@@ -318,14 +318,14 @@ class ezpYamlDataTest extends idDatabaseTestCase
   {
     $fixture_objects = dirname(__FILE__) . '/../fixtures/modify_object.yml';
 
-    $data = new ezpYamlData();
+    $data = new ezpYamlData(true);
     $data->loadObjectsData($fixture_objects);
-    
+    eZContentObject::clearCache();
     $folder = idObjectRepository::retrieveByRemoteId('folder');
     
     $this->assertEquals('Folder after change', (string)$folder->name);
     $this->assertContains('test english modified', (string)$folder->description);
-    $this->assertEquals('test italiano modificato', (string)$folder->description->ita_IT);
+    $this->assertContains('test italiano modificato', (string)$folder->description->ita_IT);
   }
 
   public function testImportAllDatatypes()

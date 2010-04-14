@@ -57,7 +57,7 @@ class idDatabaseTestCase extends ezpDatabaseTestCase
     unset($GLOBALS['eZContentClassObjectCache']);
     unset($GLOBALS['eZContentClassAttributeCache']);
     
-    eZContentClassAttribute::resetClassAttributeIdentifierHash();
+    eZContentClassAttribute::expireCache();
     
   }
 }

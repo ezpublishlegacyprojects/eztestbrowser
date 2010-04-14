@@ -70,7 +70,7 @@ class ezpLoader
     foreach ($this->object_parameters->get('translations') as $language_code => $attributes)
     {
       array_walk($attributes, 'remoteIdToId', array('map' => $this->content_object_ids, 'data_map' => $object->dataMap));
-      $object->addTranslation($language_code, $attributes);
+      $object->addOrUpdateTranslation($language_code, $attributes);
     }
   }
 
@@ -222,9 +222,11 @@ class ezpLoader
     }
 
     $repository = new idObjectRepository($this->object_parameters);
+    
     $object = $repository->createOrRetrieve();
-    $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
 
+    $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
+    
     $object->hydrate($this->object_parameters->getAll());
     $object->hydrate($this->object_parameters->get('attributes'), true);
 
@@ -443,4 +445,3 @@ function remoteIdToId(&$value, $name, $parameters)
   }
 }
 
-?>

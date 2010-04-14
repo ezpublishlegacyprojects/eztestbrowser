@@ -25,10 +25,7 @@ class idObject extends ezpObject
   protected $repository = null;
   protected $errors = array();
   protected $database;
-  protected $class;
-  protected $mainNode;
-  protected $nodes = array();
-
+  
   public $object;
   
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
@@ -87,7 +84,7 @@ class idObject extends ezpObject
   public function hydrate($attributes, $only_data_map = false)
   {
     if (!is_array($attributes)) return;
-
+    
     foreach ($attributes as $name => $value)
     {
       if($this->object->hasAttribute($name) && !$only_data_map)
@@ -167,6 +164,45 @@ class idObject extends ezpObject
   }
 
   /*
+   * Adds or update a translation in the language $newLanguageCode
+   *
+   * @param string $newLanguageCode
+   * @param mixed $translationData array( attribute identifier => attribute value )
+   * @return void
+   */
+  public function addOrUpdateTranslation( $newLanguageCode, $translationData )
+  {
+    
+    if(in_array($newLanguageCode, array_keys($this->object->allLanguages())))
+    {
+      return $this->updateTranslation($newLanguageCode, $translationData);
+    }
+
+    return $this->addTranslation($newLanguageCode, $translationData);
+  }
+
+  /**
+   * Update an existing translation object translation
+   *
+   * @param string $newLanguageCode the language code such as "eng-GB" or "ita-IT"
+   * @param mixed  $translationData array( attribute identifier => attribute value )
+   */
+  public function updateTranslation($newLanguageCode, $translationData)
+  {
+    $this->database->begin();
+    $newLanguageCode = str_replace('-', '_', $newLanguageCode);
+    // @TODO: Add generic datatype support here
+    foreach ($translationData as $attr => $value)
+    {
+        $this->$attr->$newLanguageCode = $value;
+    }
+
+    $this->database->commit();
+    
+    $this->publish();
+  }
+
+  /*
    * Adds a translation in language $newLanguageCode for object
    *
    * @param string $newLanguageCode
@@ -191,13 +227,13 @@ class idObject extends ezpObject
         {
             $value = idAttribute::processXmlTextData($value, $versionDataMap[$attr], $this, $this->repository);
         }
-
+       
         $versionDataMap[$attr]->fromString($value);
         $versionDataMap[$attr]->store();
     }
 
     $this->database->commit();
-
+    
     $this->updateName($version, $newLanguageCode);
     $this->publishContentObject($this->object, $version);
   }
@@ -251,6 +287,7 @@ class idObject extends ezpObject
   public function addLanguage($language_code)
   {
     $this->addTranslation($language_code);    
+    $this->publish();
   }
 
   public function setParserError($errors, $name)

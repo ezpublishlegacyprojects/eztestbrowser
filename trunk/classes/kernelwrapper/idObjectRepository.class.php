@@ -79,6 +79,8 @@ class idObjectRepository
   public static function retrieveByClassIdentifier($class_identifier, $conditions = array())
   {
     $class = eZContentClass::fetchByIdentifier($class_identifier, false);
+    $conditions = array_merge($conditions, array('contentclass_id' => $class['id']));
+   
     return eZContentObject::fetchFilteredList($conditions, false, false, false);
   }
 
@@ -100,5 +102,29 @@ class idObjectRepository
     }
 
     throw new ezpInvalidObjectException('Impossible to create or retrieve an object. You need to pass an id or a class_identifier.');
+  }
+
+  /**
+   * Retrieve the first object filtered by an attribute and its value
+   *
+   * @param string $attribute_identifier
+   * @param mixed $value
+   * @return mixed 
+   */
+  public static function retrieveByTextAttribute($class_identifier, $attribute_identifier, $value, $parentnode_id = 2)
+  {
+    $class_id = eZContentClass::classIDByIdentifier($class_identifier);
+    $results_array = eZContentFunctionCollection::fetchObjectTree( $parentnode_id, false, false, false, 0, 1, 4, false, $class_id,
+                                                                   array(array($attribute_identifier,'=',$value)), false, 'include',
+                                                                   array($class_id), false, true, false, array(), true, false, true);
+
+    if (isset($results_array['result']) && count($results_array['result']) > 0)
+    {
+      $object = new idObject();
+      $object->fromeZContentObject($results_array['result'][0]->attribute('object'));
+      return $object;
+    }
+
+    return null;
   }
 }

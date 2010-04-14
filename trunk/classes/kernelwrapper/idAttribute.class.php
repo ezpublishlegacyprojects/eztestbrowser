@@ -90,6 +90,10 @@ class idAttribute
        */
       switch( $attribute->attribute( 'data_type_string' ) )
       {
+        case 'ezprice':
+          $attribute->fromString($value);
+          $attribute->store();
+          break;
         case 'ezurl':
         case 'ezimage':
           $value = $this->cleanImagePath($value);
@@ -166,6 +170,10 @@ class idAttribute
   {
     switch($this->attribute->attribute('data_type_string'))
     {
+      case 'ezsimpleselection':
+          $this->attribute->setAttribute('data_text', $value);
+          $this->attribute->store();
+        break;
       case 'ezxmltext':
         $this->attribute->fromString(idAttribute::processXmlTextData($value, $this->attribute, $this->object, $this->object->repository));
         break;
@@ -179,13 +187,19 @@ class idAttribute
       case 'ezinteger':
       case 'ezboolean':
       case 'ezbinaryfile':
+      case 'ezprice':
       default:
         $this->attribute->fromString($value);
+        $this->attribute->store();
         break;
     }
 
     $this->attribute->store();
   }
+
+  public function getOriginalAttribute()
+  {
+    return $this->attribute;
+  }
 }
 
-?>

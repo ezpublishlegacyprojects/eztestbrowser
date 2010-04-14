@@ -67,7 +67,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     return hash('md5', $this->fixtures_classes.$this->fixtures_objects);
   }
 
-  private function checkLoadDatabase()
+  protected function checkLoadDatabase()
   {
     return (bool)($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()));
   }
