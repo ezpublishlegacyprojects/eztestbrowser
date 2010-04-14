@@ -31,7 +31,7 @@ class idObject extends ezpObject
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
   {
     $this->database = eZDB::instance();
-    
+
     if ($classIdentifier)
     {
       $this->class = eZContentClass::fetchByIdentifier($classIdentifier);

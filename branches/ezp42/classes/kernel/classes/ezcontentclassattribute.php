@@ -705,6 +705,11 @@ class eZContentClassAttribute extends eZPersistentObject
             return false;
     }
 
+    public static function resetClassAttributeIdentifierHash()
+    {
+      self::$identifierHash = null;
+    }
+
     /**
      * Returns the class attribute identifier hash for the current database.
      * If it is outdated or non-existent, the method updates/generates the file
@@ -826,6 +831,7 @@ class eZContentClassAttribute extends eZPersistentObject
         }
     }
 
+
     /**
      * Clears all content class attribute related caches
      *
@@ -889,6 +895,7 @@ class eZContentClassAttribute extends eZPersistentObject
     public $IsRequired;
     public $IsInformationCollector;
     public $Module;
+
 
     /**
      * In-memory cache for class attributes identifiers / id matching
