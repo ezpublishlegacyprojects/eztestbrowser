@@ -30,6 +30,7 @@ foreach ( $autoloadArray as $class => $file )
         PHPUnit_Util_Filter::addFileToWhitelist( "{$baseDir}/{$file}" );
     }
 }
+$siteaccess = ParseArguments::getSiteaccess($argv);
 
 $cli = eZCLI::instance();
 $script = eZScript::instance( array( 'description' => ( "Ideato Test Runner for eZ Publish\n\n" .
@@ -37,6 +38,7 @@ $script = eZScript::instance( array( 'description' => ( "Ideato Test Runner for 
                                                          "\n" ),
                                       'use-session' => false,
                                       'use-modules' => true,
+                                      'site-access' => $siteaccess,
                                       'use-extensions' => true ) );
 
 $script->startup();
