@@ -1,0 +1,18 @@
+News:
+  object_name:          <title>
+  is_container:           true
+  attributes:
+    title:                 { name: Title, type: ezstring, is_required: true }
+    image:             { name: Image, type: ezimage, is_required: true }
+    intro:               { name: Intro, type: ezxmltext, is_required: true }
+    body:               { name: Body, type: ezxmltext, is_required: true }
+    publish_date: { name: Publication date, type: ezdate }
+  translations:
+    ita-IT:
+      name:                  Notizia
+      attributes:
+        title:                  Titolo
+        intro:                 Intro
+        body:                 Corpo
+        publish_date:   Data di pubblicazione
+        image:               Immagine

@@ -1,0 +1,13 @@
+Article:
+  article:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      title: An article
+      intro: description of an article
+        
+Article_:
+  article:
+    id: article
+    locations:
+      folder_menu_top: { parent_node_id: 5 }

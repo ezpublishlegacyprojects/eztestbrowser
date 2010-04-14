@@ -1,0 +1,14 @@
+Folder:
+  homepage:
+    id: 1
+    attributes:
+      name: Home Page
+      short_name: Home Page
+      short_description: Short description
+      description: Description
+    translations:
+      ita-IT:
+        name: Home Page
+        short_name: Home Page
+        short_description: Descrizione breve
+        description: Descrizione

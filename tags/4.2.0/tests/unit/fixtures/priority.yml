@@ -1,0 +1,19 @@
+Folder:
+  folder_menu_top:
+    locations:
+      main: { parent_node_id: 2}
+    attributes:
+      name: Menu Top
+      short_description: Objects contained in this folder will be showed in the top menu
+      
+Article:
+  la_famiglia:
+    locations:
+      main: { parent_node_id: 2, priority: 10 }
+      folder_menu_top: { parent_node_id: folder_menu_top, priority: -1 }
+    attributes:
+      title: The family
+      intro: incontrate la famiglia Zonin e la sua passione per la viticultura sin dal 1891
+    translations:
+      ita-IT:
+         title: La famiglia
