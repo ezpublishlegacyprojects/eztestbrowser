@@ -76,12 +76,12 @@ class idObjectRepository
    * @param string $date_stop
    * @return array
    */
-  public static function retrieveByClassIdentifier($class_identifier, $conditions = array())
+  public static function retrieveByClassIdentifier($class_identifier, $conditions = array(), $asObject = false)
   {
     $class = eZContentClass::fetchByIdentifier($class_identifier, false);
     $conditions = array_merge($conditions, array('contentclass_id' => $class['id']));
    
-    return eZContentObject::fetchFilteredList($conditions, false, false, false);
+    return eZContentObject::fetchFilteredList($conditions, false, false, $asObject);
   }
 
   /**
