@@ -67,10 +67,15 @@ class ezpYamlData extends ezpLoader
    *
    * @param string $file
    */
-  public function loadClassesData($file)
+  public function loadClassesData($files)
   {
-    $data = $this->parseYaml($file);
-    $this->buildClasses($data);
+    if (!is_array($files)) $files = array($files);
+
+    foreach($files as $yaml)
+    {
+      $data = $this->parseYaml($yaml);
+      $this->buildClasses($data);
+    }
   }
 
 }

@@ -236,10 +236,15 @@ class ezpClass
    */
   public function addAttributesTranslationsFromArray($attributes, $language_code)
   {
-    $data_map = $this->class->dataMap();
-
+    $data_map = $this->class->dataMap();    
+    
     foreach ($attributes as $identifier => $name)
     {
+      if (!isset($data_map[$identifier]))
+      {
+        throw new Exception('Attribute '.$identifier.' doesn\'t exists');
+      }
+      
       $this->output("\tsetting attribute name: ".$identifier);
       $data_map[$identifier]->setName($name, $language_code);
       $data_map[$identifier]->store();

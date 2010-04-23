@@ -1,0 +1,14 @@
+Event:
+  object_name:          <title>
+  is_container:           true
+  attributes:
+    title:                 { name: Title, type: ezstring, is_required: true }
+    intro:               { name: Intro, type: ezxmltext, is_required: true }
+    body:               { name: Body, type: ezxmltext, is_required: true }
+  translations:
+    ita-IT:
+      name:                  Evento
+      attributes:
+        title:                  Titolo
+        intro:                 Intro
+        body:                 Corpo

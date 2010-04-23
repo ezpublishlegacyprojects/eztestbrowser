@@ -318,7 +318,7 @@ class ezpYamlDataTest extends idDatabaseTestCase
   {
     $fixture_objects = dirname(__FILE__) . '/../fixtures/modify_object.yml';
 
-    $data = new ezpYamlData(true);
+    $data = new ezpYamlData();
     $data->loadObjectsData($fixture_objects);
     eZContentObject::clearCache();
     $folder = idObjectRepository::retrieveByRemoteId('folder');
@@ -410,5 +410,26 @@ class ezpYamlDataTest extends idDatabaseTestCase
     $this->assertContains('<strong>This</strong> is a <emphasize>description</emphasize>', (string)$object->ezxmltext);
     $this->assertContains('<strong>This</strong> is a <emphasize>description</emphasize>', (string)$object->ezxmltext->eng_GB);
     $this->assertContains('<strong>Questa</strong> è una <emphasize>descrizione</emphasize>', (string)$object->ezxmltext->ita_IT);
+  }
+
+  public function testLoadDifferentClassesYaml()
+  {
+    $fixtuers = array();
+    
+    $fixtures[] = dirname(__FILE__) . '/../fixtures/classes/news.yml';
+    $fixtures[] = dirname(__FILE__) . '/../fixtures/classes/event.yml';
+
+    $data = new ezpYamlData();
+    $data->loadClassesData($fixtures);
+
+    $class = eZContentClass::fetchByIdentifier('news');
+
+    $this->assertEquals($class->name(), 'News');
+    $this->assertEquals($class->name('ita-IT'), 'Notizia');
+
+    $class = eZContentClass::fetchByIdentifier('event');
+
+    $this->assertEquals($class->name(), 'Event');
+    $this->assertEquals($class->name('ita-IT'), 'Evento');
   }
 }
