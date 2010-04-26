@@ -110,4 +110,33 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     unset($GLOBALS['eZContentLanguageMask']);
   }
 
+  /**
+   * Remove an eZContentObject
+   *
+   * @param int $object_id
+   */
+  protected function removeObject($object_id)
+  {
+    $object = eZContentObject::fetch($object_id);
+    $object->remove();
+  }
+
+  /**
+   * Add an eZContentObject and returns the object id
+   *
+   * @param string $class_identifier
+   * @param int $parent_node_id
+   * @param array $attributes
+   * @return int
+   */
+  protected function addObject($class_identifier, $parent_node_id = 2, $attributes = array())
+  {
+    $object = new idObject($class_identifier, $parent_node_id);
+    $object->fromArray($attributes);
+    $object->store();
+    $object->publish();
+
+    return $object;
+  }
+
 }
