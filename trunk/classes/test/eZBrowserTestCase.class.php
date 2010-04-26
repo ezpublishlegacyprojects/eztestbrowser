@@ -55,8 +55,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     $GLOBALS['eZTextCodecInternalCharsetReal'] = 'utf-8';
     $this->charset = $GLOBALS['eZTextCodecInternalCharsetReal'];
 
-    $this->$fixtures_hash = $this->getFixturesHash();
-    $this->$load_once = true;
+    $this->fixtures_hash = $this->getFixturesHash();
+    $this->load_once = true;
 
     $this->sqlFiles[] = realpath($this->kernel_schema);
     $this->sqlFiles[] = realpath($this->cleandata);
