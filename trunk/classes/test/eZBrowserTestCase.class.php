@@ -85,7 +85,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
       $this->insertSql();
   
       $data = new ezpYamlData($this->verbose);
-      $data->loadClassesData(realpath($this->fixtures_classes));
+      $data->loadClassesData($this->fixtures_classes);
       $data->loadObjectsData(realpath($this->fixtures_objects));
     }
     

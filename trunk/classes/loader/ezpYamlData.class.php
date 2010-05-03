@@ -69,7 +69,17 @@ class ezpYamlData extends ezpLoader
    */
   public function loadClassesData($files)
   {
-    if (!is_array($files)) $files = array($files);
+    if (!is_array($files))
+    {
+      $realpath_files = realpath($files);
+
+      if (file_exists($realpath_files))
+      {
+        $files = $realpath_files;
+      }
+      
+      $files = array($files);
+    }
 
     foreach($files as $yaml)
     {
