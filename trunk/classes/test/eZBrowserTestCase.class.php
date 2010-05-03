@@ -55,8 +55,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     $GLOBALS['eZTextCodecInternalCharsetReal'] = 'utf-8';
     $this->charset = $GLOBALS['eZTextCodecInternalCharsetReal'];
 
-    $this->fixtures_hash = $this->getFixturesHash();
-    $this->load_once = true;
+    self::$fixtures_hash = $this->getFixturesHash();
+    self::$load_once = true;
 
     $this->sqlFiles[] = realpath($this->kernel_schema);
     $this->sqlFiles[] = realpath($this->cleandata);
@@ -64,7 +64,13 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   
   private function getFixturesHash()
   {
-    return hash('md5', $this->fixtures_classes.$this->fixtures_objects);
+    $fixtures_classes = $this->fixtures_classes;
+    if(is_array($this->fixtures_classes))
+    {
+      $fixtures_classes = implode('', $this->fixtures_classes);
+    }
+
+    return hash('md5', $fixtures_classes.$this->fixtures_objects);
   }
 
   protected function checkLoadDatabase()
