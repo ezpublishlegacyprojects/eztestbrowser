@@ -94,7 +94,8 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
       $data->loadClassesData($this->fixtures_classes);
       $data->loadObjectsData(realpath($this->fixtures_objects));
     }
-    
+
+    $this->sharedFixture = ezpDatabaseHelper::useDatabase(ezpTestRunner::dsn());
     eZDB::setInstance($this->sharedFixture);
   }
 
