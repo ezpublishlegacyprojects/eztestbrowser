@@ -146,4 +146,15 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     return $object;
   }
 
+  /**
+   * Displays the debug output response and die
+   */
+  protected function debug()
+  {
+    $tidy = new tidy();
+    $tidy->parseString($this->getResponseText(), array('indent' => true, 'output-xhtml' => true, 'wrap' => 200), 'utf8');
+    $tidy->cleanRepair();
+    echo $tidy;die();
+  }
+
 }
