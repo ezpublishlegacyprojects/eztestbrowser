@@ -77,7 +77,17 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
   {
     return (bool)($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()));
   }
-  
+
+  protected function bootstrap()
+  {
+    $this->initialize();
+    $this->insertSql();
+
+    $data = new ezpYamlData($this->verbose);
+    $data->loadClassesData($this->fixtures_classes);
+    $data->loadObjectsData(realpath($this->fixtures_objects));
+  }
+
   /**
    * Sets up the database enviroment
    */
@@ -87,12 +97,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     
     if($this->checkLoadDatabase())
     {
-      $this->initialize();
-      $this->insertSql();
-  
-      $data = new ezpYamlData($this->verbose);
-      $data->loadClassesData($this->fixtures_classes);
-      $data->loadObjectsData(realpath($this->fixtures_objects));
+      $this->bootstrap();
     }
 
     $this->sharedFixture = ezpDatabaseHelper::useDatabase(ezpTestRunner::dsn());
@@ -155,6 +160,24 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     $tidy->parseString($this->getResponseText(), array('indent' => true, 'output-xhtml' => true, 'wrap' => 200), 'utf8');
     $tidy->cleanRepair();
     echo $tidy;die();
+  }
+
+  /**
+   * Retrieves attribute "name" from a dom input element
+   *
+   * @param string $attribute
+   * @param string $suffix
+   * @return string
+   */
+  protected function matchFieldName($attribute, $suffix = '')
+  {
+    $identifier = 'ezcoa-'.$attribute->contentclassattribute_id.'_'.eZContentClassAttribute::fetch($attribute->contentclassattribute_id)->attribute('identifier').$suffix;
+
+    if ($attribute->attribute('data_type_string') == 'ezboolean' || $attribute->attribute('data_type_string') == 'ezsimpleselection')
+    {
+      return str_replace('[]', '', $this->getResponseDomCssSelector()->matchSingle('#'.$identifier)->getNode()->getAttribute('name'));
+    }
+    return $this->getResponseDomCssSelector()->matchSingle('#'.$identifier)->getNode()->getAttribute('name');
   }
 
 }
