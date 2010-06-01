@@ -151,15 +151,26 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     return $object;
   }
 
+  protected function debugAndDie($tidy = true)
+  {
+    $this->debug($tidy);
+    die();
+  }
+
   /**
    * Displays the debug output response and die
    */
-  protected function debug()
+  protected function debug($tidy = true)
   {
-    $tidy = new tidy();
-    $tidy->parseString($this->getResponseText(), array('indent' => true, 'output-xhtml' => true, 'wrap' => 200), 'utf8');
-    $tidy->cleanRepair();
-    echo $tidy;die();
+    $response = $this->getResponseText();
+    if ($tidy)
+    {
+      $tidy = new tidy();
+      $tidy->parseString($response, array('indent' => true, 'output-xhtml' => true, 'wrap' => 200), 'utf8');
+      $tidy->cleanRepair();
+      $response = (string)$tidy;
+    }
+    echo $response;
   }
 
   /**
