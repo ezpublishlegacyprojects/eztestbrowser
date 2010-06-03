@@ -91,6 +91,8 @@ class idAttribute
       switch( $attribute->attribute( 'data_type_string' ) )
       {
         case 'ezprice':
+        case 'ezkeyword':
+        case 'ezuser':
           $attribute->fromString($value);
           $attribute->store();
           break;
@@ -188,6 +190,7 @@ class idAttribute
       case 'ezboolean':
       case 'ezbinaryfile':
       case 'ezprice':
+      case 'ezkeyword':
       default:
         $this->attribute->fromString($value);
         $this->attribute->store();

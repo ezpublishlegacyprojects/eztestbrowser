@@ -287,8 +287,17 @@ class ezpLoader
   public function buildClass($name, $data)
   {
     $this->output('Creating class '.$name);
+
+    $class_group_id = '1';
+    $class_group_name = 'Content';
     
-    $class = new ezpClass($name, $this->getIdentifierFromName($name), $data['object_name']);
+    if (isset($data['class_group']))
+    {
+      $class_group_id   = array_key_exists('id', $data['class_group']) ? $data['class_group']['id'] : '1';
+      $class_group_name = array_key_exists('name', $data['class_group']) ? $data['class_group']['name'] : 'Content';
+    }
+
+    $class = new ezpClass($name, $this->getIdentifierFromName($name), $data['object_name'], 14, 'eng-GB', $class_group_id, $class_group_name);
     $class->fromArray($data);
     $class->addAttributesFromArray($data['attributes']);
     if (isset($data['translations']))
@@ -296,7 +305,8 @@ class ezpLoader
       $class->addTranslationsFromArray($data['translations']);
     }
     $class->store();
-    $class->addToGroup('Content');
+
+    //$class->addToGroup($class_group_id, $class_group_name);
   }
 
   /**

@@ -256,9 +256,9 @@ class ezpClass
    *
    * @param string $group
    */
-  public function addToGroup($group)
+  public function addToGroup($group_id = 1, $group_name = 'Content')
   {
-    $classGroup = eZContentClassClassGroup::create($this->id, $this->version, 1, $group);
+    $classGroup = eZContentClassClassGroup::create($this->id, $this->version, $group_id, $group_name);
     $classGroup->store();
   }
 
