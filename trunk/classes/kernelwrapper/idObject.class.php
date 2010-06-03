@@ -104,7 +104,6 @@ class idObject extends ezpObject
     }
     
     $this->object = $object;
-    $this->data_map = $this->object->dataMap();
     $this->class = $object->contentClass();
 
     return $this;
@@ -118,7 +117,6 @@ class idObject extends ezpObject
     }
 
     $this->object = $object;
-    $this->data_map = $this->object->dataMap();
 
     return $this;
   }
