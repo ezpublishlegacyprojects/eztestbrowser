@@ -142,7 +142,13 @@ class idObject extends ezpObject
       $attribute->fromString($value);
     }
     catch(ezpInvalidObjectAttributeException $e)
-    { 
+    {
+      if (!$this->object->hasAttribute($name))
+      {
+        $this->$name = $value;
+        return;
+      }
+
       $this->object->setAttribute($name, $value);
     }
   }

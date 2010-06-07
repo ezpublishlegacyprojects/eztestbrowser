@@ -80,12 +80,19 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 
   protected function bootstrap()
   {
-    $this->initialize();
-    $this->insertSql();
+    try
+    {
+      $this->initialize();
+      $this->insertSql();
 
-    $data = new ezpYamlData($this->verbose);
-    $data->loadClassesData($this->fixtures_classes);
-    $data->loadObjectsData(realpath($this->fixtures_objects));
+      $data = new ezpYamlData($this->verbose);
+      $data->loadClassesData($this->fixtures_classes);
+      $data->loadObjectsData(realpath($this->fixtures_objects));
+    }
+    catch(Exception $e)
+    {
+      eZDebug::writeError($e->getMessage());
+    }
   }
 
   /**
