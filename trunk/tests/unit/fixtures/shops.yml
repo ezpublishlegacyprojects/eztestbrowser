@@ -1,0 +1,6 @@
+Folder:
+  regali:
+    locations:
+      main: { parent_node_id: 2 }
+    attributes:
+      name:       Regali

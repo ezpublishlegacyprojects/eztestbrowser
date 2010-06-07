@@ -1,0 +1,7 @@
+RaccoltaRegali:
+  object_name:            <nome>
+  is_container:           true
+  attributes:
+    nome:                       { name: Nome, type: ezstring, is_required: true }
+    a_partire_da:               { name: A partire da, type: ezfloat }
+    numero_regali:              { name: Numero regali da scegliere, type: ezinteger }

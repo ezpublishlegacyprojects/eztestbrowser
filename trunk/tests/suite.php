@@ -30,6 +30,8 @@ class eZTestBrowserTestSuite extends ezpTestSuite
 
     $this->addTestSuite('eZBrowserTestCaseTest');
     $this->addTestSuite('ExporterYamlClassTest');
+
+    $this->addTestSuite('HarmonyBugsWithItaLoaderTest');
   }
   
   public static function suite()

@@ -94,7 +94,7 @@ class ezpLoader
 
     foreach ($this->object_parameters->get('locations') as $index => $location)
     {
-      $this->output("\tAdding location $index....");
+      $this->output("\tAdding location $index (".$location['parent_node_id'].")....");
       $node = $object->addNode($this->getParentNodeId($location['parent_node_id']), $index == 'main');
 
       if (isset($location['priority']))
