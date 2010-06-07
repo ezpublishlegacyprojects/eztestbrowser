@@ -201,6 +201,48 @@ class ezpLoader
     return $parent_node_id;
   }
 
+  /**
+   * Retrieve currente locale and add language from default locale if needed
+   */
+  protected function initDefaultLanguageByLocale()
+  {
+    $locale = eZLocale::currentLocaleCode();
+    $this->output("Initializing default language by locale ".$locale);
+    eZContentLanguage::addLanguage($locale);
+  }
+
+  /**
+   * Reset parameter
+   * Set parameters in sfParameterHolder object
+   * Set ID if mapped
+   * 
+   * @param array $object_parameters
+   */
+  protected function setObjectParameters($object_parameters)
+  {
+    $this->object_parameters->clear();
+    $this->object_parameters->add($object_parameters);
+
+    if (isset($this->content_object_ids[$this->object_parameters->get('id')]))
+    {
+      $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
+    }
+  }
+
+  /**
+   * Create or retrieve an idObject
+   * 
+   * @return idObject
+   */
+  public function initObject()
+  {
+    $this->output("creating ".$this->object_parameters->get('remote_id'));
+
+    $repository = new idObjectRepository($this->object_parameters);
+
+    return $repository->createOrRetrieve();
+  }
+
   /*
    * Build eZ Publish object
    *
@@ -208,22 +250,10 @@ class ezpLoader
    * @return idObject
    */
   public function buildObject($object_parameters)
-  {
-    
-    $this->object_parameters->clear();
-    $this->object_parameters->add($object_parameters);
+  {     
+    $this->setObjectParameters($object_parameters);
 
-    $this->output("creating ".$this->object_parameters->get('remote_id'));
-
-
-    if (isset($this->content_object_ids[$this->object_parameters->get('id')]))
-    {
-      $this->object_parameters->set('id', $this->content_object_ids[$this->object_parameters->get('id')]);
-    }
-
-    $repository = new idObjectRepository($this->object_parameters);
-    
-    $object = $repository->createOrRetrieve();
+    $object = $this->initObject();
 
     $this->remoteIdToId($object, $this->object_parameters->get('attributes'));
     
@@ -326,6 +356,8 @@ class ezpLoader
   {
     $this->verbose = $verbose;
     $this->object_parameters = new sfParameterHolder();
+
+    $this->initDefaultLanguageByLocale();
   }
 
   public function remoteIdToId($object, &$attributes)

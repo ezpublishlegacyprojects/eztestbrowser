@@ -125,6 +125,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 
   public function tearDown()
   {
+    eZContentLanguage::clearPrioritizedLanguages();
     unset($GLOBALS['eZContentLanguageList']);
     unset($GLOBALS['eZContentLanguageMask']);
   }

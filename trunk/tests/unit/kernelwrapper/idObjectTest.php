@@ -136,41 +136,4 @@ class idObjectTest extends idDatabaseTestCase
 
     $this->AssertEquals($object->remote_id, 'nuovo_articolo_test');
   }
-
-  public function test_addNode()
-  {
-    $loader = new eZMockYamlData(true);
-    $loader->loadClassesData(dirname(__FILE__).'/../fixtures/classes/raccolta_regali.yml');
-    $loader->loadObjectsData(dirname(__FILE__).'/../fixtures/shops.yml');
-
-
-    $parameters = array(
-      'locations' => array('main' => array('parent_node_id' => 'regali')),
-      'class_identifier' => 'RaccoltaRegali',
-      'remote_id' => 'quarantanove_e_novantanove',
-      'attributes' => array(
-                              'nome' => 'A partire da 49.99',
-                              'a_partire_da' => 49.99,
-                              'numero_regali' => 3,
-                           )
-      );
-
-    try
-    {
-      $loader->buildObject($parameters);
-    }
-    catch (Exception $e)
-    {
-      $this->fail("generated excetion : ".$e->getMessage());
-    }
-    
-  }
-}
-
-class eZMockYamlData extends ezpYamlData
-{
-  public function getMockParentNodeId($parent_node_id)
-  {
-    return $this->getParentNodeId($parent_node_id);
-  }
 }
