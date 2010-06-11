@@ -44,6 +44,7 @@ class idDatabaseTestCase extends ezpDatabaseTestCase
         ezpTestDatabaseHelper::insertSqlData($this->sharedFixture, $this->sqlFiles);
       }
     }
+    $this->sharedFixture = ezpDatabaseHelper::useDatabase(ezpTestRunner::dsn());
     eZDB::setInstance($this->sharedFixture);
   }
     
