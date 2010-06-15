@@ -41,7 +41,10 @@ class idDatabaseTestCase extends ezpDatabaseTestCase
 
       if (count($this->sqlFiles) > 0)
       {
-        ezpTestDatabaseHelper::insertSqlData($this->sharedFixture, $this->sqlFiles);
+        if (!ezpTestDatabaseHelper::insertSqlData($this->sharedFixture, $this->sqlFiles))
+        {
+          throw new Exception('Some errors occurred loading sql files');
+        }
       }
     }
     $this->sharedFixture = ezpDatabaseHelper::useDatabase(ezpTestRunner::dsn());
