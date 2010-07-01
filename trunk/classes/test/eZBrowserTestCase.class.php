@@ -128,6 +128,9 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     eZContentLanguage::clearPrioritizedLanguages();
     unset($GLOBALS['eZContentLanguageList']);
     unset($GLOBALS['eZContentLanguageMask']);
+
+    $db = eZDB::instance();
+    $db->close();
   }
 
   /**

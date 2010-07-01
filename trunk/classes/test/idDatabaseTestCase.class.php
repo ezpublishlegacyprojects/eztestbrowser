@@ -53,6 +53,7 @@ class idDatabaseTestCase extends ezpDatabaseTestCase
     
   public function tearDown()
   {
+    parent::tearDown();
     eZContentObject::clearCache();
     unset($GLOBALS['eZContentLanguageList']);
     unset($GLOBALS['eZContentLanguageMask']);
