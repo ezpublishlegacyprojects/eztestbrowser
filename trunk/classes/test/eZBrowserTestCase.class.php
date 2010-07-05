@@ -78,16 +78,20 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     return (bool)($this->load_database && (!self::$load_once || self::$fixtures_hash != $this->getFixturesHash()));
   }
 
+  protected function loadData()
+  {
+    $data = new ezpYamlData($this->verbose);
+    $data->loadClassesData($this->fixtures_classes);
+    $data->loadObjectsData(realpath($this->fixtures_objects));
+  }
+
   protected function bootstrap()
   {
     try
     {
       $this->initialize();
       $this->insertSql();
-
-      $data = new ezpYamlData($this->verbose);
-      $data->loadClassesData($this->fixtures_classes);
-      $data->loadObjectsData(realpath($this->fixtures_objects));
+      $this->loadData();
     }
     catch(Exception $e)
     {
