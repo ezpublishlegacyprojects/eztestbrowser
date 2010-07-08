@@ -123,12 +123,21 @@ class ezpLoader
       throw new Exception('You must set related data in yaml');
     }
 
-    foreach ($this->object_parameters->get('related') as $object_remote_id)
+    $related = $this->object_parameters->get('related');
+    $related_type = eZContentObject::RELATION_COMMON;
+
+    if (isset($related['type']))
+    {
+      $related_type = $related['type'];
+      $related = $related['items'];
+    }
+
+    foreach ($related as $object_remote_id)
     {
       if (isset($this->content_object_ids[$object_remote_id]))
       {
         $object_id = (int) $this->content_object_ids[$object_remote_id];
-        if ($object->addContentObjectRelation($object_id) === false)
+        if ($object->addContentObjectRelation($object_id, false, 0, $related_type) === false)
         {
           throw new Exception('Somthing wrong with related object '.$object_remote_id);
         }
