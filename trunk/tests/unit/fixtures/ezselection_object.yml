@@ -1,0 +1,11 @@
+Test:
+  selection_object:
+    locations:
+      main: {parent_node_id: 2}
+    attributes:
+      title:            Title
+      options:          "module column 1"
+    translations:
+      ita-IT:
+        title:            Titolo
+        options:          "module column 3"

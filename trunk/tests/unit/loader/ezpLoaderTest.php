@@ -28,6 +28,24 @@ class ezpLoaderTest extends idDatabaseTestCase
     $this->assertEquals('opzione3', (string)$options_xml->options->option[2]->attributes()->name);
   }
 
+  public function testeZSelectionObjectLoad()
+  {
+    $fixture = dirname(__FILE__) . '/../fixtures/ezselection_complex.yml';
+    $data = new ezpYamlData();
+    $data->loadClassesData($fixture);
+
+    $fixture = dirname(__FILE__) . '/../fixtures/ezselection_object.yml';
+    $data = new ezpYamlData();
+    $data->loadObjectsData($fixture);
+
+    $object = idObjectRepository::retrieveByRemoteId('selection_object');
+
+    $this->assertEquals('mod1Col', $object->options->eng_GB->DataText);
+    $this->assertEquals('module column 1', (string)$object->options->eng_GB);
+    $this->assertEquals('mod3Col', $object->options->ita_IT->DataText);
+    $this->assertEquals('module column 3', (string)$object->options->ita_IT);
+  }
+
   public function test_buildObject_with_different_default_language()
   {
     $loader = new eZMockYamlData();

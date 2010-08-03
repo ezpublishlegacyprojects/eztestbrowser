@@ -1,0 +1,16 @@
+Test:
+  object_name:          <title>  
+  attributes:
+    title:
+      name:             Title
+      type:             ezstring
+    options:
+      name:             Options
+      type:             ezselection
+      options:          { mod1Col: "module column 1", mod2Col: "module column 2", mod3Col: "module column 3" }
+  translations:
+    ita-IT:
+      name:             Notizia
+      title:
+        title:          Titolo
+        options:        Opzioni
