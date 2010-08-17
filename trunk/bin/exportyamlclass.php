@@ -3,12 +3,12 @@
 require_once 'autoload.php';
 
 $cli = eZCLI::instance();
-$script = eZScript::instance( array( 'description' => ( "Ideato Test Runner for eZ Publish\n\n" .
-                                                         "sets up an eZ Publish testing environment" .
-                                                         "\n" ),
-                                      'use-session' => false,
-                                      'use-modules' => true,
-                                      'use-extensions' => true ) );
+$script = eZScript::instance(array('description' => ("Ideato Test Runner for eZ Publish\n\n".
+                                                   "sets up an eZ Publish testing environment" .
+                                                   "\n" ),
+                                  'use-session' => false,
+                                  'use-modules' => true,
+                                  'use-extensions' => true));
 
 $script->startup();
 $options = $script->getOptions('[class_identifier:]',
