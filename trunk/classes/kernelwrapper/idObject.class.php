@@ -321,4 +321,9 @@ class idObject extends ezpObject
   {
     return $this->class;
   }
+
+  public function getParentObject()
+  {
+    return $this->main_node->fetchParent()->object();
+  }
 }
