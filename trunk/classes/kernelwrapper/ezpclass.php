@@ -206,7 +206,7 @@ class ezpClass
         $attribute->setAttribute('data_text5', $xml);
       }
 
-      $attribute->store();
+//      $attribute->store();
     }
 
     return $this->class->dataMap();

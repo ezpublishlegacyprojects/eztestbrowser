@@ -23,10 +23,32 @@
 class idObjectRepository
 {
   protected $parameters;
-
+  protected $array_object;
+  
   public function __construct($parameters)
   {
     $this->parameters = $parameters;
+  }
+
+  public function setObjects(array $objects)
+  {
+    $this->array_object = new ArrayObject($objects);
+  }
+
+  public function toArray(array $keys)
+  {
+    $array = array();
+    for($iterator = $this->array_object->getIterator(); $iterator->valid(); $iterator->next())
+    {
+      $array[] = idObjectRepository::retrieveFromeZContentObject($iterator->current()->object())->
+                 toArray($keys);
+    }
+    return $array;
+  }
+
+  public function getArrayObject()
+  {
+    return $this->array_object;
   }
 
   /**
@@ -126,5 +148,13 @@ class idObjectRepository
     }
 
     return null;
+  }
+
+  public static function retrieveFromeZContentObject(eZContentObject $content_object)
+  {
+    $object = new idObject();
+    $object->fromeZContentObject($content_object);
+
+    return $object;
   }
 }

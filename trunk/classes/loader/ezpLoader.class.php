@@ -344,8 +344,8 @@ class ezpLoader
       $class->addTranslationsFromArray($data['translations']);
     }
     $class->store();
-
-    //$class->addToGroup($class_group_id, $class_group_name);
+    
+    $class->addToGroup($class_group_id, $class_group_name);
   }
 
   /**

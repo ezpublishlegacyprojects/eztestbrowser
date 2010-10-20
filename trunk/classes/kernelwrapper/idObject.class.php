@@ -326,4 +326,15 @@ class idObject extends ezpObject
   {
     return $this->main_node->fetchParent()->object();
   }
+
+  public function toArray($keys = array())
+  {
+    $array = array();
+    foreach($keys as $key)
+    {
+      $array[$key] = (string)$this->$key;
+    }
+
+    return $array;
+  }
 }
