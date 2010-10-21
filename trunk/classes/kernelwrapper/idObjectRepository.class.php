@@ -25,7 +25,7 @@ class idObjectRepository
   protected $parameters;
   protected $array_object;
   
-  public function __construct($parameters)
+  public function __construct($parameters = array())
   {
     $this->parameters = $parameters;
   }
