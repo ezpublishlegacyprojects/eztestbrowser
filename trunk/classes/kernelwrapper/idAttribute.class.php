@@ -111,6 +111,7 @@ class idAttribute
           break;
         case 'ezxmltext':
           $value = $this->processXmlTextData( $value, $attribute, $this->object, $this->object->getImportImageRepository());
+        case 'ezpage':
         default:
           $attribute->setAttribute('data_text', $value);
       }
@@ -178,6 +179,10 @@ class idAttribute
         break;
       case 'ezxmltext':
         $this->attribute->fromString(idAttribute::processXmlTextData($value, $this->attribute, $this->object, $this->object->repository));
+        break;
+      case 'ezpage':
+          $this->attribute->setAttribute('data_text', $value);
+          $this->attribute->store();
         break;
       case 'ezdate':
         if (preg_match('/\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?/', $value))
