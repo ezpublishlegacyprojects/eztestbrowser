@@ -183,6 +183,11 @@ class ezpClass
         $attribute->setAttribute('data_text4', $attribute_data['data_text4']);
       }
 
+      if (isset($attribute_data['data_text5']))
+      {
+        $attribute->setAttribute('data_text5', $attribute_data['data_text5']);
+      }
+
       if (isset($attribute_data['options']) && $attribute_data['type'] == 'ezselection')
       {
         // Serialize XML
