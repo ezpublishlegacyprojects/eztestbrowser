@@ -28,6 +28,7 @@ class idObjectRepository
   public function __construct($parameters = array())
   {
     $this->parameters = $parameters;
+    $this->array_object = new ArrayObject();
   }
 
   public function setObjects(array $objects)
