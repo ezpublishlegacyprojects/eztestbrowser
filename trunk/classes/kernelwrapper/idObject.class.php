@@ -22,10 +22,11 @@
 
 class idObject extends ezpObject
 {
-  protected $repository = null;
+  
   protected $errors = array();
   protected $database;
-  
+
+  public $repository = null;
   public $object;
   
   public function __construct($classIdentifier = false, $parentNodeID = false, $creatorID = 14, $section = 1)
@@ -83,6 +84,8 @@ class idObject extends ezpObject
 
   public function hydrate($attributes, $only_data_map = false)
   {
+    unset($attributes['class_identifier']);
+    
     if (!is_array($attributes)) return;
     
     foreach ($attributes as $name => $value)
@@ -91,7 +94,10 @@ class idObject extends ezpObject
       {
         $this->object->setAttribute($name, $value);
       }
-      $this->$name = $value;
+      else
+      {
+        $this->$name = $value;
+      }
     }
     $this->store();
   }

@@ -51,11 +51,4 @@ class idTestRunner extends ezpTestRunner{
           die ( $e->getMessage() . "\n" );
       }
   }
-
-  public static function main()
-  {
-    $testRunner = new idTestRunner();
-    $testRunner->runFromArguments();
-  }
 }
-?>

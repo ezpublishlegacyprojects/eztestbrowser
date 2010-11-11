@@ -50,6 +50,9 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
 
   protected function initialize()
   {
+    $_SERVER['HTTP_HOST'] = 'localhost';
+    $_SERVER['SERVER_PORT'] = '80';
+
     eZCache::clearAll();
     
     $GLOBALS['eZTextCodecInternalCharsetReal'] = 'utf-8';
