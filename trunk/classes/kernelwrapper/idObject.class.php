@@ -83,10 +83,11 @@ class idObject extends ezpObject
   }
 
   public function hydrate($attributes, $only_data_map = false)
-  {
-    unset($attributes['class_identifier']);
+  {    
     
     if (!is_array($attributes)) return;
+
+    unset($attributes['class_identifier']);
     
     foreach ($attributes as $name => $value)
     {
