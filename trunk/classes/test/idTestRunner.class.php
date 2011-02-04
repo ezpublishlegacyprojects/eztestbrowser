@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -16,7 +16,7 @@ class idTestRunner extends ezpTestRunner{
     $options = parent::getSpecifiedConsoleOptions($consoleInput);
 
     $options['junitLogfile'] = $options['xmlLogfile'];
-    
+
     return $options;
   }
 
@@ -51,4 +51,11 @@ class idTestRunner extends ezpTestRunner{
           die ( $e->getMessage() . "\n" );
       }
   }
+
+  public static function main()
+  {
+    $testRunner = new idTestRunner();
+    $testRunner->runFromArguments();
+  }
 }
+?>
