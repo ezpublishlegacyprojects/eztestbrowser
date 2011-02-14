@@ -173,9 +173,24 @@ class ezpClass
         $attribute->setAttribute('is_information_collector', $attribute_data['is_information_collector']);
       }
 
+      if (isset($attribute_data['data_int1']))
+      {
+        $attribute->setAttribute('data_int1', $attribute_data['data_int1']);
+      }
+
+      if (isset($attribute_data['data_text1']))
+      {
+        $attribute->setAttribute('data_text1', $attribute_data['data_text1']);
+      }
+
       if (isset($attribute_data['data_text2']))
       {
         $attribute->setAttribute('data_text2', $attribute_data['data_text2']);
+      }
+
+      if (isset($attribute_data['data_text3']))
+      {
+        $attribute->setAttribute('data_text3', $attribute_data['data_text3']);
       }
 
       if (isset($attribute_data['data_text4']))
