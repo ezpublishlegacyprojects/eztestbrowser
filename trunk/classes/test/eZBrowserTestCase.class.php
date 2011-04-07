@@ -65,7 +65,7 @@ abstract class eZBrowserTestCase extends PHPUnit_Extensions_WebBrowserTestCase
     $this->sqlFiles[] = realpath($this->cleandata);
   }
   
-  private function getFixturesHash()
+  protected function getFixturesHash()
   {
     $fixtures_classes = $this->fixtures_classes;
     if(is_array($this->fixtures_classes))
