@@ -331,6 +331,11 @@ class idObject extends ezpObject
 
   public function getParentObject()
   {
+    if(!$this->main_node)
+    {
+      throw new Exception('The main node does not exists');
+    }
+    
     return $this->main_node->fetchParent()->object();
   }
 
